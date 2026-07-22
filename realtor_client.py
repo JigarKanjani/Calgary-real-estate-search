@@ -8,15 +8,23 @@ Talks directly to Realtor.ca's internal property-search endpoint
 
 This is the ONLY source-specific file. Everything downstream (dedup,
 filtering, Telegram formatting) consumes the normalized dicts, so a
-different data source (Apify actor, ScrapingBee, a licensed CREA/DDF feed)
-can be dropped in by re-implementing `fetch_listings()` with the same
-return shape.
+different data source (a licensed CREA/DDF feed, etc.) can be dropped in by
+re-implementing `fetch_listings()` with the same return shape.
 
-NOTE on bot protection: Realtor.ca sits behind Imperva/Incapsula. From a
-fresh residential IP the endpoint usually answers with JSON; from a
-datacenter IP (e.g. a GitHub Actions runner) it may return an HTML
-"Access Denied" page instead. If that happens, set REALTOR_PROXY to a
-residential/rotating proxy URL (or swap this file for a managed scraper).
+BOT PROTECTION: Realtor.ca sits behind Imperva/Incapsula. From a fresh
+residential IP the endpoint usually answers with JSON; from a datacenter IP
+(e.g. a GitHub Actions runner) it returns an HTML "Access Denied" page.
+To get past it, pick ONE of these (checked in this order):
+
+  1. Managed scraper (recommended for GitHub Actions) — set an API key and
+     the request is routed through a residential-proxy scraping API that
+     clears Imperva for you. Supported providers (auto-selected by which
+     credential is present):
+        • ScrapingBee : set  SCRAPINGBEE_API_KEY
+        • Scrape.do   : set  SCRAPEDO_TOKEN
+     Force one explicitly with  SCRAPER_PROVIDER=scrapingbee|scrapedo|direct.
+  2. Generic proxy — set REALTOR_PROXY to "http://user:pass@host:port".
+  3. Direct — no config; works only from an unblocked (residential) IP.
 """
 
 import os
@@ -30,9 +38,33 @@ import urllib.error
 REALTOR_API   = "https://api2.realtor.ca/Listing.svc/PropertySearch_Post"
 LISTING_BASE  = "https://www.realtor.ca"
 
-# Optional proxy for clearing datacenter-IP blocks. Format understood by
-# urllib, e.g. "http://user:pass@host:port". Empty = direct connection.
+# Optional generic proxy for clearing datacenter-IP blocks. Format understood
+# by urllib, e.g. "http://user:pass@host:port". Empty = direct connection.
 REALTOR_PROXY = os.environ.get("REALTOR_PROXY", "").strip()
+
+# ── Managed scraper config ───────────────────────────────────────────────────
+# A managed scraper fetches the target through a residential-proxy API that
+# clears Imperva, so the free GitHub Actions runner doesn't get blocked.
+SCRAPINGBEE_API_KEY = os.environ.get("SCRAPINGBEE_API_KEY", "").strip()
+SCRAPEDO_TOKEN      = os.environ.get("SCRAPEDO_TOKEN", "").strip()
+# "scrapingbee" | "scrapedo" | "direct" — overrides auto-detection when set.
+SCRAPER_PROVIDER    = os.environ.get("SCRAPER_PROVIDER", "").strip().lower()
+# ISO country the scraper should proxy from (Realtor.ca is geo-sensitive).
+SCRAPER_COUNTRY     = os.environ.get("SCRAPER_COUNTRY", "ca").strip().lower()
+
+SCRAPINGBEE_ENDPOINT = "https://app.scrapingbee.com/api/v1/"
+SCRAPEDO_ENDPOINT    = "https://api.scrape.do/"
+
+
+def _active_provider():
+    """Return the managed-scraper provider to use, or "" for a direct call."""
+    if SCRAPER_PROVIDER:
+        return "" if SCRAPER_PROVIDER == "direct" else SCRAPER_PROVIDER
+    if SCRAPINGBEE_API_KEY:
+        return "scrapingbee"
+    if SCRAPEDO_TOKEN:
+        return "scrapedo"
+    return ""
 
 # ── Calgary bounding box (city of Calgary, approx.) ──────────────────────────
 # Realtor.ca searches by a lat/long rectangle, not a city name.
@@ -56,22 +88,66 @@ HEADERS = {
 }
 
 
-def _opener():
-    """Build a urllib opener, honoring REALTOR_PROXY if configured."""
+def _opener(use_proxy):
+    """Build a urllib opener; apply REALTOR_PROXY only on a direct call."""
     handlers = []
-    if REALTOR_PROXY:
+    if use_proxy and REALTOR_PROXY:
         handlers.append(urllib.request.ProxyHandler(
             {"http": REALTOR_PROXY, "https": REALTOR_PROXY}))
     return urllib.request.build_opener(*handlers)
 
 
-def _post(payload, timeout=25):
+def _build_request(data):
+    """Build the (Request, use_proxy, label) for the active provider.
+
+    The target Realtor.ca POST (form body + browser headers) is preserved in
+    every case; a managed scraper just wraps it and forwards it through a
+    residential proxy that clears Imperva.
+    """
+    provider = _active_provider()
+
+    if provider == "scrapingbee":
+        params = {
+            "api_key": SCRAPINGBEE_API_KEY,
+            "url": REALTOR_API,
+            "premium_proxy": "true",       # residential IPs — needed for Imperva
+            "country_code": SCRAPER_COUNTRY,
+            "render_js": "false",          # it's a JSON API, no browser needed
+            "forward_headers": "true",     # pass our Spb-* headers to the target
+        }
+        api_url = SCRAPINGBEE_ENDPOINT + "?" + urllib.parse.urlencode(params)
+        # ScrapingBee forwards headers prefixed with "Spb-" to the target.
+        headers = {"Spb-" + k: v for k, v in HEADERS.items()}
+        headers["Content-Type"] = HEADERS["Content-Type"]  # for the POST body
+        req = urllib.request.Request(api_url, data=data, headers=headers,
+                                     method="POST")
+        return req, False, "ScrapingBee"
+
+    if provider == "scrapedo":
+        params = {
+            "token": SCRAPEDO_TOKEN,
+            "url": REALTOR_API,
+            "super": "true",               # residential proxy ("super" mode)
+            "geoCode": SCRAPER_COUNTRY,
+            "customHeaders": "true",       # forward our headers as-is
+        }
+        api_url = SCRAPEDO_ENDPOINT + "?" + urllib.parse.urlencode(params)
+        req = urllib.request.Request(api_url, data=data, headers=dict(HEADERS),
+                                     method="POST")
+        return req, False, "Scrape.do"
+
+    # Direct (optionally through REALTOR_PROXY).
+    req = urllib.request.Request(REALTOR_API, data=data, headers=dict(HEADERS),
+                                 method="POST")
+    return req, True, "direct"
+
+
+def _post(payload, timeout=40):
     """POST form-encoded payload to Realtor.ca, return parsed JSON or None."""
     data = urllib.parse.urlencode(payload).encode("utf-8")
-    req = urllib.request.Request(REALTOR_API, data=data, headers=HEADERS,
-                                 method="POST")
+    req, use_proxy, label = _build_request(data)
     try:
-        with _opener().open(req, timeout=timeout) as resp:
+        with _opener(use_proxy).open(req, timeout=timeout) as resp:
             raw = resp.read().decode("utf-8", "replace")
     except urllib.error.HTTPError as e:
         body = ""
@@ -82,14 +158,14 @@ def _post(payload, timeout=25):
         # Imperva/Incapsula answers with 403 + an HTML block page from
         # datacenter IPs. Make the remedy obvious in the logs.
         if e.code in (403, 429) and "<html" in body.lower():
-            print(f"  [Realtor BLOCKED] HTTP {e.code} bot-protection page "
-                  f"(datacenter IP). Set REALTOR_PROXY to a residential proxy, "
-                  f"or swap realtor_client.fetch_listings() for a managed scraper.")
+            print(f"  [Realtor BLOCKED via {label}] HTTP {e.code} bot-protection "
+                  f"page. Configure a managed scraper (SCRAPINGBEE_API_KEY or "
+                  f"SCRAPEDO_TOKEN) or a residential REALTOR_PROXY.")
         else:
-            print(f"  [Realtor HTTP {e.code}] {e.reason} {body[:200]}")
+            print(f"  [Realtor HTTP {e.code} via {label}] {e.reason} {body[:200]}")
         return None
     except Exception as e:
-        print(f"  [Realtor ERROR] {e}")
+        print(f"  [Realtor ERROR via {label}] {e}")
         return None
 
     # A bot-block page is HTML, not JSON — detect and report clearly.
@@ -97,8 +173,8 @@ def _post(payload, timeout=25):
         return json.loads(raw)
     except json.JSONDecodeError:
         snippet = raw.strip()[:120].replace("\n", " ")
-        print(f"  [Realtor BLOCKED] Non-JSON response (likely Imperva). "
-              f"Set REALTOR_PROXY to a residential proxy. Got: {snippet!r}")
+        print(f"  [Realtor BLOCKED via {label}] Non-JSON response (likely "
+              f"Imperva, or a scraper error). Got: {snippet!r}")
         return None
 
 
@@ -149,6 +225,9 @@ def fetch_listings(price_min, price_max, bbox=None, records_per_page=200,
     """
     bbox = bbox or CALGARY_BBOX
     transaction_id = 2 if transaction == "sale" else 1  # 2 = For Sale
+
+    provider = _active_provider() or ("proxy" if REALTOR_PROXY else "direct")
+    print(f"  [Realtor] fetch mode: {provider}")
 
     listings = []
     seen_mls = set()

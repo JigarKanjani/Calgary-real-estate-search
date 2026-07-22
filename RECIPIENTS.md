@@ -52,17 +52,43 @@ If `TELEGRAM_CHAT_ID_LISTINGS` is unset, the bot falls back to `TELEGRAM_CHAT_ID
 
 ---
 
-## 4. Optional — proxy for Realtor.ca
+## 4. Required for GitHub Actions — get past Realtor.ca's bot protection
 
-Realtor.ca sits behind Imperva bot protection and may block GitHub's
-datacenter IPs. If runs report `[Realtor BLOCKED]`, set the secret
-**`REALTOR_PROXY`** to a residential/rotating proxy URL:
+Realtor.ca sits behind Imperva/Incapsula and **blocks GitHub's datacenter
+IPs** (runs will log `[Realtor BLOCKED]` and return 0 listings). Pick **one**
+of the options below. A managed scraper is recommended — it routes the request
+through residential IPs that clear the block for you.
 
-```
-http://user:pass@proxy-host:port
-```
+The bot auto-detects which option you configured (in this order): ScrapingBee →
+Scrape.do → generic proxy → direct. Force one with the `SCRAPER_PROVIDER`
+secret (`scrapingbee` | `scrapedo` | `direct`).
 
-Leave it empty to connect directly (works from most residential IPs).
+### Option A — ScrapingBee (recommended)
+
+1. Sign up at [scrapingbee.com](https://www.scrapingbee.com) (free trial credits).
+2. Copy your API key from the dashboard.
+3. Add the secret **`SCRAPINGBEE_API_KEY`** = your key.
+
+Uses `premium_proxy` (residential) + `country_code=ca` automatically.
+
+### Option B — Scrape.do
+
+1. Sign up at [scrape.do](https://scrape.do) (free monthly credits).
+2. Copy your token.
+3. Add the secret **`SCRAPEDO_TOKEN`** = your token.
+
+Uses `super` (residential) mode + `geoCode=ca` automatically.
+
+### Option C — your own residential proxy
+
+Add the secret **`REALTOR_PROXY`** = `http://user:pass@proxy-host:port`.
+
+> Running locally from a home/residential IP usually works with **none** of
+> these set (direct connection). The scraper is mainly for the cloud runner.
+
+**Watch your credits:** each 6-hour run makes a handful of requests (one per
+result page). That's well within free tiers, but a managed scraper is a metered
+service — check your provider dashboard occasionally.
 
 ---
 

@@ -33,6 +33,11 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           TELEGRAM_CHAT_ID_LISTINGS: ${{ secrets.TELEGRAM_CHAT_ID_LISTINGS }}
+          # Managed scraper (set ONE to get past Realtor.ca's bot protection
+          # on GitHub's datacenter IPs). See RECIPIENTS.md.
+          SCRAPINGBEE_API_KEY: ${{ secrets.SCRAPINGBEE_API_KEY }}
+          SCRAPEDO_TOKEN: ${{ secrets.SCRAPEDO_TOKEN }}
+          # Generic residential proxy fallback (alternative to a scraper).
           REALTOR_PROXY: ${{ secrets.REALTOR_PROXY }}
           LISTING_PRICE_MIN: '150000'
           LISTING_PRICE_MAX: '600000'

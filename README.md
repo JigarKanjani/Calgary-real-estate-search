@@ -81,16 +81,27 @@ python realtor_client.py
 ## Data-source note
 
 Realtor.ca (CREA) has no free public API and sits behind Imperva/Incapsula bot
-protection. This bot calls the site's internal `PropertySearch_Post` endpoint
-directly, which works from most residential IPs but **may be blocked from
-GitHub's datacenter IPs** (HTTP 403 + a block page). If you see
-`[Realtor BLOCKED]` in the logs:
+protection. This bot calls the site's internal `PropertySearch_Post` endpoint,
+which works from residential IPs but is **blocked from GitHub's datacenter IPs**
+(HTTP 403 + a block page).
 
-1. Set `REALTOR_PROXY` to a residential/rotating proxy, **or**
-2. Replace `realtor_client.py`'s `fetch_listings()` with a managed scraper
-   (Apify Realtor.ca actor, ScrapingBee, Scrape.do) or a licensed CREA DDF
-   feed — the return shape is documented in `_normalize()`, so nothing else
-   needs to change.
+To get past it, `realtor_client.py` has a **built-in managed-scraper layer** —
+set one credential and the request is routed through a residential-proxy
+scraping API that clears Imperva. The fetch mode is auto-selected in this order
+(and printed at run start as `[Realtor] fetch mode: ...`):
+
+| Priority | Configure | Mode |
+|---|---|---|
+| 1 | `SCRAPINGBEE_API_KEY` | ScrapingBee (`premium_proxy`, `country_code=ca`) |
+| 2 | `SCRAPEDO_TOKEN` | Scrape.do (`super`, `geoCode=ca`) |
+| 3 | `REALTOR_PROXY` | your own residential proxy |
+| 4 | *(nothing)* | direct — only works from a residential IP |
+
+Force a specific mode with `SCRAPER_PROVIDER=scrapingbee|scrapedo|direct`.
+See [`RECIPIENTS.md`](./RECIPIENTS.md) for signup steps. For a fully licensed
+feed instead, re-implement `fetch_listings()` against a CREA DDF feed — the
+normalized return shape is documented in `_normalize()`, so nothing downstream
+changes.
 
 Condo/maintenance fees are not always present in the search payload; when
 absent the message omits the line (the exact fee is on the listing page).
