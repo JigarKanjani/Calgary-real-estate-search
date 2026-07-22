@@ -5,10 +5,13 @@ Calgary property listings in a price window and pushes each new one to Telegram.
 Mirrors the mechanism of a job-alert bot, but for real estate.
 
 - **Price window:** $150,000 – $600,000 (configurable)
-- **Property types:** condos (apartments), townhouses / row, semi-detached,
-  duplexes, detached houses — resale only (new-construction excluded)
+- **Property types:** townhouses / row, semi-detached, duplexes, detached
+  houses — resale only, **no condo apartments** (new-construction excluded)
 - **Area:** City of Calgary
-- **Freshness:** "new" = not seen before, tracked by MLS number in a committed file
+- **Freshness:** only listings put up in the **last 12 hours** (newest-first)
+- **Value:** only the **top 30% by area-to-price ratio** (best $/sqft) — measured
+  against the whole current market, so you get the genuine value picks
+- **Dedup:** never sends the same MLS number twice (committed tracker file)
 
 ---
 
@@ -71,10 +74,21 @@ python realtor_client.py
 | What | Where |
 |---|---|
 | Price window | `--min/--max`, or `LISTING_PRICE_MIN/MAX` env (set in the workflow) |
+| Freshness cap | `LISTING_MAX_AGE_HOURS` env (default `12`; `0` disables) |
+| Value cut (top %) | `LISTING_VALUE_TOP_PCT` env (default `30`; lower = stricter, e.g. `20`) |
+| Require area to rank | `LISTING_REQUIRE_AREA` env (default `1`; `0` lets un-rated listings pass the value gate) |
+| Exclude condos | `LISTING_EXCLUDE_CONDOS` env (default `1`) / `CONDO_MARKERS` in `listing_alert.py` |
 | Property types | `WANTED_TYPES` in `listing_alert.py` (empty list = all residential) |
 | New-build exclusion | `NEW_BUILD_MARKERS` in `listing_alert.py` |
 | Search area | `CALGARY_BBOX` in `realtor_client.py` (lat/long rectangle) |
+| Fetch sort order | `REALTOR_SORT` env (default `6-D` = newest; fetch is whole-market then ranked) |
 | Cron cadence | `.github/workflows/calgary-listings.yml` |
+
+**How the value ranking works:** each run fetches the whole matching market
+(non-condo, in price band), computes each listing's price-per-sqft, and finds the
+`LISTING_VALUE_TOP_PCT` percentile. A listing is only sent if it's newest-first
+fresh (≤ 12h), new (not seen), **and** in that top value tier. If fewer than 8
+listings have a usable area, the value gate is skipped for that run (logged).
 
 ---
 

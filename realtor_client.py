@@ -193,6 +193,21 @@ def _price_to_int(price_str):
 _TICKS_AT_UNIX_EPOCH = 621355968000000000
 
 
+def _parse_size_sqft(size_str):
+    """'1,200 sqft' -> 1200.0 ; handles ranges, m² conversion. None if absent."""
+    if not size_str:
+        return None
+    s = str(size_str).lower().replace(",", "")
+    nums = [float(n) for n in re.findall(r"\d+(?:\.\d+)?", s)]
+    nums = [n for n in nums if n > 0]
+    if not nums:
+        return None
+    val = sum(nums) / len(nums) if len(nums) > 1 else nums[0]   # avg a range
+    if "m2" in s or "sqm" in s or "square met" in s or "m²" in s:
+        val *= 10.7639   # m² -> sqft
+    return val if val > 0 else None
+
+
 def _parse_inserted_date(val):
     """Parse Realtor.ca InsertedDateUTC into a Unix epoch (seconds), or None.
 
@@ -237,15 +252,22 @@ def _normalize(result):
     inserted = (result.get("InsertedDateUTC")
                 or prop.get("InsertedDateUTC"))
 
+    price_int = _price_to_int(prop.get("Price", ""))
+    size_sqft = _parse_size_sqft(building.get("SizeInterior"))
+    # Value metric: price per interior square foot (lower = better value).
+    pps = round(price_int / size_sqft, 2) if (price_int and size_sqft) else None
+
     return {
         "mls":        str(result.get("MlsNumber", "")).strip(),
         "price":      prop.get("Price", ""),
-        "price_int":  _price_to_int(prop.get("Price", "")),
+        "price_int":  price_int,
         "address":    address.get("AddressText", "").replace("|", ", ").strip(),
         "type":       (building.get("Type") or prop.get("Type") or "").strip(),
         "bedrooms":   (building.get("Bedrooms") or "").strip(),
         "bathrooms":  (building.get("BathroomTotal") or "").strip(),
         "size":       (building.get("SizeInterior") or "").strip(),
+        "size_sqft":  size_sqft,
+        "price_per_sqft":  pps,
         "condo_fee":  str(condo_fee).strip() if condo_fee else "",
         "ownership":  (prop.get("OwnershipType") or "").strip(),
         "listed_epoch":    _parse_inserted_date(inserted),
@@ -281,7 +303,10 @@ def fetch_listings(price_min, price_max, bbox=None, records_per_page=200,
             "ApplicationId": 1,
             "CultureId": 1,
             "Version": "7.0",
-            "Sort": "6-D",               # 6-D = newest first
+            # 6-D = newest first (known-good). We fetch the whole market for the
+            # value ranking anyway and re-sort client-side, so this only sets
+            # fetch order. Override via REALTOR_SORT to experiment server-side.
+            "Sort": os.environ.get("REALTOR_SORT", "6-D"),
             "CurrentPage": page,
         }
         print(f"  [Realtor] page {page} (price {price_min:,}-{price_max:,})...")

@@ -58,14 +58,31 @@ CHAT_IDS = parse_ids(os.environ.get("TELEGRAM_CHAT_ID_LISTINGS")) or \
 # semi-detached, duplexes, plus regular detached houses. Set to [] to allow
 # every residential type the price filter returns.
 WANTED_TYPES = [
-    "apartment",        # condo apartments
     "row",              # row / townhouse
     "townhouse",
     "semi",             # semi-detached
     "duplex",
     "house",            # detached
-    "condo",
 ]
+
+# ── Condo exclusion ──────────────────────────────────────────────────────────
+# "No condos" — drop apartment-style condo listings. Ground-oriented townhouses
+# / row houses stay (they're house-like even if condo-titled).
+EXCLUDE_CONDOS = os.environ.get("LISTING_EXCLUDE_CONDOS", "1") not in ("0", "", "false")
+CONDO_MARKERS  = ["apartment", "condo apartment", "high rise", "hi-rise",
+                  "highrise", "apartment unit"]
+
+# ── Value ranking ────────────────────────────────────────────────────────────
+# Keep only listings whose area-to-price ratio (sqft per $, i.e. the best value)
+# falls in the top N% of the current market. Internally we rank by price/sqft
+# (lower = better value); the top VALUE_TOP_PCT% by area/price == the lowest
+# VALUE_TOP_PCT% by price/sqft.
+VALUE_TOP_PCT = float(os.environ.get("LISTING_VALUE_TOP_PCT", "30"))
+# Drop listings with no interior area (can't compute the ratio). Set to 0 to
+# instead let un-rated listings through the value gate.
+REQUIRE_AREA  = os.environ.get("LISTING_REQUIRE_AREA", "1") not in ("0", "", "false")
+# Need at least this many rated listings before a percentile is meaningful.
+MIN_VALUE_POP = 8
 
 # ── New-build exclusion ──────────────────────────────────────────────────────
 # You want resale ("old builds"), not builder new-construction. Realtor.ca is
@@ -134,13 +151,49 @@ def append_tracker(listing):
 
 
 def type_ok(listing):
-    """Property-type allow-list + new-build exclusion."""
+    """Property-type allow-list + condo + new-build exclusion."""
+    ptype = listing["type"].lower()
     haystack = f"{listing['type']} {listing['address']}".lower()
     if any(m in haystack for m in NEW_BUILD_MARKERS):
         return False
+    if EXCLUDE_CONDOS and any(m in ptype for m in CONDO_MARKERS):
+        return False
     if not WANTED_TYPES:
         return True
-    return any(w in listing["type"].lower() for w in WANTED_TYPES)
+    return any(w in ptype for w in WANTED_TYPES)
+
+
+def _percentile(sorted_vals, pct):
+    """Value at the given percentile of an ascending-sorted list."""
+    if not sorted_vals:
+        return None
+    import math
+    n = len(sorted_vals)
+    idx = min(n - 1, max(0, math.ceil(pct / 100.0 * n) - 1))
+    return sorted_vals[idx]
+
+
+def value_cutoff(listings):
+    """price/sqft threshold for the top VALUE_TOP_PCT% by area/price.
+
+    Returns (cutoff, population_size). cutoff is None when there aren't enough
+    rated listings to rank meaningfully (value gate is then skipped).
+    """
+    pps = sorted(l["price_per_sqft"] for l in listings
+                 if l.get("price_per_sqft") and price_ok(l) and type_ok(l))
+    if len(pps) < MIN_VALUE_POP:
+        return None, len(pps)
+    return _percentile(pps, VALUE_TOP_PCT), len(pps)
+
+
+def value_ok(listing, cutoff):
+    """True if the listing is in the top VALUE_TOP_PCT% by area/price."""
+    if cutoff is None:            # not enough data to rank — don't gate
+        return True
+    pps = listing.get("price_per_sqft")
+    if pps is None:
+        return not REQUIRE_AREA
+    return pps <= cutoff
 
 
 def price_ok(listing):
@@ -213,6 +266,9 @@ def format_listing_message(listing, age_hours=None):
         msg += f"💵 Condo fee: {listing['condo_fee']}\n"
     if listing["ownership"]:
         msg += f"📄 {listing['ownership']}\n"
+    # Value metric: price per sqft (lower = better area-to-price ratio).
+    if listing.get("price_per_sqft"):
+        msg += f"📐 ${listing['price_per_sqft']:,.0f}/sqft (value pick)\n"
     if listed:
         msg += f"🕒 Listed: {listed}\n"
     msg += (
@@ -231,7 +287,9 @@ def main():
     age_cap = f"≤ {MAX_AGE_HOURS:g}h" if MAX_AGE_HOURS > 0 else "off"
     print(f"\n{'='*60}")
     print(f"CALGARY LISTINGS — {datetime.now().strftime('%Y-%m-%d %H:%M')} MST")
-    print(f"Price window: ${args.min:,}–${args.max:,} | Freshness: {age_cap} | "
+    print(f"Price ${args.min:,}–${args.max:,} | Freshness: {age_cap} | "
+          f"Value: top {VALUE_TOP_PCT:g}% area/price | "
+          f"Condos: {'excluded' if EXCLUDE_CONDOS else 'included'} | "
           f"Recipients: {len(CHAT_IDS)}")
     print(f"{'='*60}")
 
@@ -250,10 +308,10 @@ def main():
     start_msg = (
         f"🚀 Calgary listings scan started "
         f"({datetime.now().strftime('%Y-%m-%d %H:%M')} MST)\n"
-        f"💰 ${args.min:,}–${args.max:,} · condos / townhouses / "
-        f"semi-detached / houses (resale)\n"
+        f"💰 ${args.min:,}–${args.max:,} · townhouses / semi / houses (no condos)\n"
+        f"📐 only top {VALUE_TOP_PCT:g}% by area-to-price value\n"
         f"{fresh_note}\n"
-        f"⏳ New listings will land here shortly."
+        f"⏳ New value picks will land here shortly."
     )
     for cid in CHAT_IDS:
         tg_send(start_msg, cid)
@@ -268,6 +326,17 @@ def main():
     if MAX_AGE_HOURS > 0 and not have_ts:
         print("  [WARN] No listing timestamps in results — cannot apply the "
               f"{MAX_AGE_HOURS:g}h freshness cap; falling back to dedup-only.")
+
+    # Value ranking: derive the area/price cutoff from the WHOLE market fetched
+    # (all non-condo, in-price listings with a known area), so "top X%" is
+    # measured against the market — not just the few fresh ones.
+    cutoff, pop = value_cutoff(listings)
+    if cutoff is not None:
+        print(f"  [Value] top {VALUE_TOP_PCT:g}% cutoff = ${cutoff:,.0f}/sqft "
+              f"(from {pop} rated listings)")
+    else:
+        print(f"  [Value] only {pop} rated listings (< {MIN_VALUE_POP}) — "
+              f"value gate skipped this run")
 
     sent = 0
     for listing in listings:
@@ -288,9 +357,15 @@ def main():
             if age is None or age > MAX_AGE_HOURS:
                 continue
 
+        # Value gate: only the top VALUE_TOP_PCT% by area-to-price ratio.
+        if not value_ok(listing, cutoff):
+            continue
+
         msg = format_listing_message(listing, age_hours=age)
         age_disp = age_label(age) or "age n/a"
-        print(f"  -> {listing['mls']} | {listing['price']} | "
+        pps = listing.get("price_per_sqft")
+        pps_disp = f"${pps:,.0f}/sqft" if pps else "n/a"
+        print(f"  -> {listing['mls']} | {listing['price']} | {pps_disp} | "
               f"{age_disp} | {listing['address']}")
 
         delivered = False
@@ -310,7 +385,8 @@ def main():
     summary_msg = (
         f"✅ Calgary listings scan done — "
         f"{datetime.now().strftime('%Y-%m-%d %H:%M')} MST\n"
-        f"{sent} new listing(s) · window ${args.min:,}–${args.max:,}{fresh_txt}\n"
+        f"{sent} new value pick(s) · ${args.min:,}–${args.max:,}{fresh_txt} · "
+        f"top {VALUE_TOP_PCT:g}% area/price\n"
         f"Source: Realtor.ca"
     )
     print(f"\n{summary_msg}")
