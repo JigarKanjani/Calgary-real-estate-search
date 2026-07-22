@@ -16,6 +16,7 @@ Usage: python listing_alert.py [--min 150000] [--max 600000]
 """
 
 import os
+import re
 import json
 import argparse
 import urllib.request
@@ -33,6 +34,10 @@ CHAT_ID      = os.environ.get("TELEGRAM_CHAT_ID", "")
 # Price window (overridable via CLI / env).
 PRICE_MIN = int(os.environ.get("LISTING_PRICE_MIN", "150000"))
 PRICE_MAX = int(os.environ.get("LISTING_PRICE_MAX", "600000"))
+
+# Freshness cap: only surface listings put up within the last N hours.
+# 0 disables the age filter (falls back to dedup-only "new since last seen").
+MAX_AGE_HOURS = float(os.environ.get("LISTING_MAX_AGE_HOURS", "12"))
 
 MAX_PER_RUN = 40   # safety cap on messages per run
 
@@ -146,7 +151,44 @@ def price_ok(listing):
     return PRICE_MIN <= p <= PRICE_MAX
 
 
-def format_listing_message(listing):
+def _parse_time_on_realtor(text):
+    """'5 hours ago' / 'Just listed' / '2 days ago' -> age in hours (or None)."""
+    if not text:
+        return None
+    t = text.lower()
+    if any(k in t for k in ("just listed", "just now", "today", "new listing")):
+        return 0.0
+    m = re.search(r"(\d+)\s*(minute|hour|day|week|month)", t)
+    if not m:
+        return None
+    n, unit = int(m.group(1)), m.group(2)
+    return n * {"minute": 1 / 60, "hour": 1, "day": 24,
+                "week": 168, "month": 720}[unit]
+
+
+def listing_age_hours(listing, now_epoch):
+    """Age of a listing in hours from InsertedDateUTC, else TimeOnRealtor.
+
+    Returns a float, or None when neither signal is available.
+    """
+    ep = listing.get("listed_epoch")
+    if ep:
+        return max(0.0, (now_epoch - ep) / 3600.0)
+    return _parse_time_on_realtor(listing.get("time_on_realtor"))
+
+
+def age_label(hours):
+    """Human 'listed' label from an age in hours."""
+    if hours is None:
+        return ""
+    if hours < 1:
+        return f"{int(round(hours * 60))} min ago"
+    if hours < 24:
+        return f"{int(round(hours))} hr ago"
+    return f"{int(round(hours / 24))} day(s) ago"
+
+
+def format_listing_message(listing, age_hours=None):
     bits = []
     if listing["bedrooms"]:
         bits.append(f"{listing['bedrooms']} bed")
@@ -157,7 +199,9 @@ def format_listing_message(listing):
     spec = " · ".join(bits)
 
     ptype = listing["type"] or "Residential"
-    found = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+
+    # Prefer Realtor.ca's own "5 hours ago" string; else our computed label.
+    listed = listing.get("time_on_realtor") or age_label(age_hours)
 
     msg = (
         f"🏠 New Calgary Listing — MLS# {listing['mls']}\n"
@@ -169,8 +213,9 @@ def format_listing_message(listing):
         msg += f"💵 Condo fee: {listing['condo_fee']}\n"
     if listing["ownership"]:
         msg += f"📄 {listing['ownership']}\n"
+    if listed:
+        msg += f"🕒 Listed: {listed}\n"
     msg += (
-        f"📅 Found: {found}\n"
         f"\n"
         f"🔗 {listing['url']}"
     )
@@ -183,9 +228,11 @@ def main():
     parser.add_argument("--max", type=int, default=PRICE_MAX, help="Max price")
     args = parser.parse_args()
 
+    age_cap = f"≤ {MAX_AGE_HOURS:g}h" if MAX_AGE_HOURS > 0 else "off"
     print(f"\n{'='*60}")
     print(f"CALGARY LISTINGS — {datetime.now().strftime('%Y-%m-%d %H:%M')} MST")
-    print(f"Price window: ${args.min:,}–${args.max:,} | Recipients: {len(CHAT_IDS)}")
+    print(f"Price window: ${args.min:,}–${args.max:,} | Freshness: {age_cap} | "
+          f"Recipients: {len(CHAT_IDS)}")
     print(f"{'='*60}")
 
     if not BOT_TOKEN:
@@ -198,17 +245,29 @@ def main():
     print(f"Tracker: {len(seen)} MLS numbers already seen")
 
     # Immediate confirmation that a run kicked off.
+    fresh_note = (f"🕒 only listings from the last {MAX_AGE_HOURS:g}h"
+                  if MAX_AGE_HOURS > 0 else "🕒 all new listings")
     start_msg = (
         f"🚀 Calgary listings scan started "
         f"({datetime.now().strftime('%Y-%m-%d %H:%M')} MST)\n"
         f"💰 ${args.min:,}–${args.max:,} · condos / townhouses / "
         f"semi-detached / houses (resale)\n"
+        f"{fresh_note}\n"
         f"⏳ New listings will land here shortly."
     )
     for cid in CHAT_IDS:
         tg_send(start_msg, cid)
 
     listings = fetch_listings(args.min, args.max)
+
+    now_epoch = datetime.now(timezone.utc).timestamp()
+    # Is any recency signal present at all? If Realtor.ca ever stops returning
+    # InsertedDateUTC/TimeOnRealtor, we degrade gracefully to dedup-only rather
+    # than silently dropping everything.
+    have_ts = any(listing_age_hours(l, now_epoch) is not None for l in listings)
+    if MAX_AGE_HOURS > 0 and not have_ts:
+        print("  [WARN] No listing timestamps in results — cannot apply the "
+              f"{MAX_AGE_HOURS:g}h freshness cap; falling back to dedup-only.")
 
     sent = 0
     for listing in listings:
@@ -223,8 +282,16 @@ def main():
         if not type_ok(listing):
             continue
 
-        msg = format_listing_message(listing)
-        print(f"  -> {listing['mls']} | {listing['price']} | {listing['address']}")
+        # Freshness cap: only surface listings put up within MAX_AGE_HOURS.
+        age = listing_age_hours(listing, now_epoch)
+        if MAX_AGE_HOURS > 0 and have_ts:
+            if age is None or age > MAX_AGE_HOURS:
+                continue
+
+        msg = format_listing_message(listing, age_hours=age)
+        age_disp = age_label(age) or "age n/a"
+        print(f"  -> {listing['mls']} | {listing['price']} | "
+              f"{age_disp} | {listing['address']}")
 
         delivered = False
         for cid in CHAT_IDS:
@@ -239,10 +306,11 @@ def main():
         if delivered or not CHAT_IDS:
             sent += 1
 
+    fresh_txt = f" · last {MAX_AGE_HOURS:g}h" if MAX_AGE_HOURS > 0 else ""
     summary_msg = (
         f"✅ Calgary listings scan done — "
         f"{datetime.now().strftime('%Y-%m-%d %H:%M')} MST\n"
-        f"{sent} new listing(s) · window ${args.min:,}–${args.max:,}\n"
+        f"{sent} new listing(s) · window ${args.min:,}–${args.max:,}{fresh_txt}\n"
         f"Source: Realtor.ca"
     )
     print(f"\n{summary_msg}")

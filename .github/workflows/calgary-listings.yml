@@ -41,6 +41,7 @@ jobs:
           REALTOR_PROXY: ${{ secrets.REALTOR_PROXY }}
           LISTING_PRICE_MIN: '150000'
           LISTING_PRICE_MAX: '600000'
+          LISTING_MAX_AGE_HOURS: '12'   # only listings put up in the last 12h
         run: |
           python listing_alert.py
 

@@ -28,6 +28,7 @@ To get past it, pick ONE of these (checked in this order):
 """
 
 import os
+import re
 import json
 import time
 import urllib.parse
@@ -186,6 +187,36 @@ def _price_to_int(price_str):
     return int(digits) if digits else None
 
 
+# .NET ticks at the Unix epoch (1970-01-01). Realtor.ca's InsertedDateUTC is a
+# .NET ticks value (100-nanosecond intervals since 0001-01-01), e.g.
+# "638724324981000000".
+_TICKS_AT_UNIX_EPOCH = 621355968000000000
+
+
+def _parse_inserted_date(val):
+    """Parse Realtor.ca InsertedDateUTC into a Unix epoch (seconds), or None.
+
+    Handles the .NET ticks form (the common case), the "/Date(ms)/" form, and
+    a plain epoch-seconds/ms integer as a fallback.
+    """
+    if not val:
+        return None
+    s = str(val).strip()
+    # "/Date(1699999999000)/" or "/Date(1699999999000-0000)/"
+    m = re.search(r"/Date\((\d+)", s)
+    if m:
+        return int(m.group(1)) / 1000.0
+    if s.isdigit():
+        n = int(s)
+        if n >= 100000000000000000:      # ~18 digits => .NET ticks
+            return (n - _TICKS_AT_UNIX_EPOCH) / 10_000_000.0
+        if n >= 10000000000000:          # ~13 digits => epoch ms
+            return n / 1000.0
+        if n >= 1000000000:              # ~10 digits => epoch seconds
+            return float(n)
+    return None
+
+
 def _normalize(result):
     """Map one Realtor.ca search result to our normalized listing dict."""
     prop     = result.get("Property", {}) or {}
@@ -201,6 +232,11 @@ def _normalize(result):
                  or prop.get("MaintenanceFee")
                  or result.get("MaintenanceFee"))
 
+    # Listing recency. InsertedDateUTC (.NET ticks) is the authoritative "when
+    # was this listed" signal; TimeOnRealtor ("5 hours ago") is a human string.
+    inserted = (result.get("InsertedDateUTC")
+                or prop.get("InsertedDateUTC"))
+
     return {
         "mls":        str(result.get("MlsNumber", "")).strip(),
         "price":      prop.get("Price", ""),
@@ -212,6 +248,8 @@ def _normalize(result):
         "size":       (building.get("SizeInterior") or "").strip(),
         "condo_fee":  str(condo_fee).strip() if condo_fee else "",
         "ownership":  (prop.get("OwnershipType") or "").strip(),
+        "listed_epoch":    _parse_inserted_date(inserted),
+        "time_on_realtor": str(result.get("TimeOnRealtor") or "").strip(),
         "url":        url,
     }
 
