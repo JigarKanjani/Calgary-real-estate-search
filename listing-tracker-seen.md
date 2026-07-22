@@ -149,3 +149,4 @@
 | A2330298 | $315,000 | Row / Townhouse | 173, 20 Falbury Crescent NE, Calgary, Alberta T3J1 | 2026-07-22 | https://www.realtor.ca/real-estate/30051141/173-20-falbury-crescent-ne-calgary-falconridge |
 | A2330157 | $309,900 | Row / Townhouse | 516 Auburn Bay Circle SE, Calgary, Alberta T3M2A3 | 2026-07-22 | https://www.realtor.ca/real-estate/30051082/516-auburn-bay-circle-se-calgary-auburn-bay |
 | A2329835 | $528,888 | House | 2056 Cottonwood Crescent SE, Calgary, Alberta T2B1 | 2026-07-22 | https://www.realtor.ca/real-estate/30051052/2056-cottonwood-crescent-se-calgary-southview |
+| A2330104 | $344,999 | Row / Townhouse | 308 Redstone View NE, Calgary, Alberta T3N0M9 | 2026-07-22 | https://www.realtor.ca/real-estate/30064250/308-redstone-view-ne-calgary-redstone |
