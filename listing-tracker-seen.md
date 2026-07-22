@@ -150,3 +150,7 @@
 | A2330157 | $309,900 | Row / Townhouse | 516 Auburn Bay Circle SE, Calgary, Alberta T3M2A3 | 2026-07-22 | https://www.realtor.ca/real-estate/30051082/516-auburn-bay-circle-se-calgary-auburn-bay |
 | A2329835 | $528,888 | House | 2056 Cottonwood Crescent SE, Calgary, Alberta T2B1 | 2026-07-22 | https://www.realtor.ca/real-estate/30051052/2056-cottonwood-crescent-se-calgary-southview |
 | A2330104 | $344,999 | Row / Townhouse | 308 Redstone View NE, Calgary, Alberta T3N0M9 | 2026-07-22 | https://www.realtor.ca/real-estate/30064250/308-redstone-view-ne-calgary-redstone |
+| A2330871 | $499,900 | Duplex | 12 Wolf Creek Drive SE, Calgary, Alberta T2X4W9 | 2026-07-22 | https://www.realtor.ca/real-estate/30066956/12-wolf-creek-drive-se-calgary-wolf-willow |
+| A2330677 | $534,900 | House | 7237 Laguna Way NE, Calgary, Alberta T1Y7B9 | 2026-07-22 | https://www.realtor.ca/real-estate/30066110/7237-laguna-way-ne-calgary-monterey-park |
+| A2331369 | $524,900 | Row / Townhouse | 108, 1632 20 Avenue NW, Calgary, Alberta T2M1G8 | 2026-07-22 | https://www.realtor.ca/real-estate/30065919/108-1632-20-avenue-nw-calgary-capitol-hill |
+| A2330257 | $259,900 | Row / Townhouse | 3915 29A Avenue SE, Calgary, Alberta T2B0G3 | 2026-07-22 | https://www.realtor.ca/real-estate/30065473/3915-29a-avenue-se-calgary-dover |
