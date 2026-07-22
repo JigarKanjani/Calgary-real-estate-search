@@ -43,8 +43,8 @@ jobs:
           LISTING_PRICE_MAX: '600000'
           LISTING_MAX_AGE_HOURS: '12'   # only listings put up in the last 12h
           LISTING_EXCLUDE_CONDOS: '1'   # no condo apartments
-          LISTING_VALUE_TOP_PCT: '30'   # only top 30% by area-to-price value
-          LISTING_REQUIRE_AREA: '1'     # need interior sqft to rank value
+          LISTING_VALUE_TOP_PCT: '40'   # only top 40% by area-to-price value
+          LISTING_REQUIRE_AREA: '0'     # also let listings with no area through (for review)
         run: |
           python listing_alert.py
 

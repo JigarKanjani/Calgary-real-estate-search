@@ -269,6 +269,8 @@ def format_listing_message(listing, age_hours=None):
     # Value metric: price per sqft (lower = better area-to-price ratio).
     if listing.get("price_per_sqft"):
         msg += f"📐 ${listing['price_per_sqft']:,.0f}/sqft (value pick)\n"
+    else:
+        msg += "📐 area not listed — review manually\n"
     if listed:
         msg += f"🕒 Listed: {listed}\n"
     msg += (
