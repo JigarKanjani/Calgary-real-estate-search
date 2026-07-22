@@ -1,0 +1,4 @@
+# The core bot uses only the Python standard library (urllib/json).
+# No third-party packages are required for realtor_client.py or listing_alert.py.
+# This file is kept for parity with the job-hunt bot and future extensions
+# (e.g. a managed-scraper adapter that needs requests).

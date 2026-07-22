@@ -1,0 +1,50 @@
+name: Calgary Listings - Every 6 Hours
+
+on:
+  schedule:
+    - cron: '15 */6 * * *'   # every 6 hours
+  workflow_dispatch:          # Manual trigger from GitHub UI
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    permissions:
+      contents: write          # Needed to commit the tracker file back
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run Calgary listings scan
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TELEGRAM_CHAT_ID_LISTINGS: ${{ secrets.TELEGRAM_CHAT_ID_LISTINGS }}
+          REALTOR_PROXY: ${{ secrets.REALTOR_PROXY }}
+          LISTING_PRICE_MIN: '150000'
+          LISTING_PRICE_MAX: '600000'
+        run: |
+          python listing_alert.py
+
+      - name: Commit updated listing tracker
+        continue-on-error: true
+        run: |
+          git config --local user.email "listings-bot@github-actions"
+          git config --local user.name "Calgary Listings Bot"
+          git add listing-tracker-seen.md
+          git diff --staged --quiet || git commit -m "chore: update listing tracker [skip ci]"
+          git pull --rebase origin ${{ github.ref_name }}
+          git push
