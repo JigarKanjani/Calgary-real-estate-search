@@ -163,3 +163,12 @@
 | A2330144 | $399,900 | Row / Townhouse | 207, 14800 1 Street NW, Calgary, Alberta T3P1H9 | 2026-07-23 | https://www.realtor.ca/real-estate/30069534/207-14800-1-street-nw-calgary-livingston |
 | A2331325 | $469,500 | Duplex | 700 Ranch Estates Place NW, Calgary, Alberta T3G1M | 2026-07-23 | https://www.realtor.ca/real-estate/30069533/700-ranch-estates-place-nw-calgary-ranchlands |
 | A2331078 | $399,900 | Row / Townhouse | 119 148 Avenue NW, Calgary, Alberta T3P1H9 | 2026-07-23 | https://www.realtor.ca/real-estate/30069507/119-148-avenue-nw-calgary-livingston |
+| A2331200 | $344,900 | Row / Townhouse | 14, 14736 Deerfield Drive SE, Calgary, Alberta T1J | 2026-07-23 | https://www.realtor.ca/real-estate/30072154/14-14736-deerfield-drive-se-calgary-deer-run |
+| A2331454 | $459,900 | Row / Townhouse | 79, 230 Seton Passage SE, Calgary, Alberta T3M3A7 | 2026-07-23 | https://www.realtor.ca/real-estate/30072143/79-230-seton-passage-se-calgary-seton |
+| A2331609 | $444,900 | Row / Townhouse | 426 Nolan Hill Boulevard NW, Calgary, Alberta T3R0 | 2026-07-23 | https://www.realtor.ca/real-estate/30072142/426-nolan-hill-boulevard-nw-calgary-nolan-hill |
+| A2331807 | $219,000 | Row / Townhouse | 334, 5404 10 Avenue SE, Calgary, Alberta T2A5G4 | 2026-07-23 | https://www.realtor.ca/real-estate/30072108/334-5404-10-avenue-se-calgary-penbrooke-meadows |
+| A2331722 | $354,900 | Row / Townhouse | 141, 7172 Coach Hill Road SW, Calgary, Alberta T3H | 2026-07-23 | https://www.realtor.ca/real-estate/30071977/141-7172-coach-hill-road-sw-calgary-coach-hill |
+| A2331614 | $279,500 | Row / Townhouse | 11, 11240 6 Street SW, Calgary, Alberta T2W1V9 | 2026-07-23 | https://www.realtor.ca/real-estate/30070990/11-11240-6-street-sw-calgary-southwood |
+| A2331016 | $375,000 | Duplex | 219 Penworth Drive SE, Calgary, Alberta T2A5E2 | 2026-07-23 | https://www.realtor.ca/real-estate/30070365/219-penworth-drive-se-calgary-penbrooke-meadows |
+| A2331428 | $510,000 | Row / Townhouse | 20604 Main Street SE, Calgary, Alberta T3M3G4 | 2026-07-23 | https://www.realtor.ca/real-estate/30070364/20604-main-street-se-calgary-seton |
+| A2309654 | $379,900 | Row / Townhouse | 123 148 Avenue NW, Calgary, Alberta T3P1E5 | 2026-07-23 | https://www.realtor.ca/real-estate/30069699/123-148-avenue-nw-calgary-sage-hill |
