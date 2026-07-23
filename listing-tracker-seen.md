@@ -154,3 +154,7 @@
 | A2330677 | $534,900 | House | 7237 Laguna Way NE, Calgary, Alberta T1Y7B9 | 2026-07-22 | https://www.realtor.ca/real-estate/30066110/7237-laguna-way-ne-calgary-monterey-park |
 | A2331369 | $524,900 | Row / Townhouse | 108, 1632 20 Avenue NW, Calgary, Alberta T2M1G8 | 2026-07-22 | https://www.realtor.ca/real-estate/30065919/108-1632-20-avenue-nw-calgary-capitol-hill |
 | A2330257 | $259,900 | Row / Townhouse | 3915 29A Avenue SE, Calgary, Alberta T2B0G3 | 2026-07-22 | https://www.realtor.ca/real-estate/30065473/3915-29a-avenue-se-calgary-dover |
+| A2331507 | $560,000 | Duplex | 91 Panora Square NW, Calgary, Alberta T3K0R3 | 2026-07-23 | https://www.realtor.ca/real-estate/30068118/91-panora-square-nw-calgary-panorama-hills |
+| A2330534 | $516,500 | Duplex | 1053 west lakeview, Chestermere, Alberta T1X2T2 | 2026-07-23 | https://www.realtor.ca/real-estate/30067412/1053-west-lakeview-chestermere-chelsea |
+| A2326994 | $300,000 | Row / Townhouse | 101, 3015 51 Street SW, Calgary, Alberta T3E6N5 | 2026-07-23 | https://www.realtor.ca/real-estate/30067340/101-3015-51-street-sw-calgary-glenbrook |
+| A2331178 | $379,000 | Row / Townhouse | 3, 6630 Bowwood Drive NW, Calgary, Alberta T3B2G9 | 2026-07-23 | https://www.realtor.ca/real-estate/30067222/3-6630-bowwood-drive-nw-calgary-bowness |
