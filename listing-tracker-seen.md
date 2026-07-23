@@ -159,3 +159,7 @@
 | A2326994 | $300,000 | Row / Townhouse | 101, 3015 51 Street SW, Calgary, Alberta T3E6N5 | 2026-07-23 | https://www.realtor.ca/real-estate/30067340/101-3015-51-street-sw-calgary-glenbrook |
 | A2331178 | $379,000 | Row / Townhouse | 3, 6630 Bowwood Drive NW, Calgary, Alberta T3B2G9 | 2026-07-23 | https://www.realtor.ca/real-estate/30067222/3-6630-bowwood-drive-nw-calgary-bowness |
 | A2331077 | $399,999 | Row / Townhouse | 363, 301 Redstone Boulevard NE, Calgary, Alberta T | 2026-07-23 | https://www.realtor.ca/real-estate/30068917/363-301-redstone-boulevard-ne-calgary-redstone |
+| A2330141 | $389,900 | Row / Townhouse | 25, 10 Sage Meadows Landing NW, Calgary, Alberta T | 2026-07-23 | https://www.realtor.ca/real-estate/30069670/25-10-sage-meadows-landing-nw-calgary-sage-hill |
+| A2330144 | $399,900 | Row / Townhouse | 207, 14800 1 Street NW, Calgary, Alberta T3P1H9 | 2026-07-23 | https://www.realtor.ca/real-estate/30069534/207-14800-1-street-nw-calgary-livingston |
+| A2331325 | $469,500 | Duplex | 700 Ranch Estates Place NW, Calgary, Alberta T3G1M | 2026-07-23 | https://www.realtor.ca/real-estate/30069533/700-ranch-estates-place-nw-calgary-ranchlands |
+| A2331078 | $399,900 | Row / Townhouse | 119 148 Avenue NW, Calgary, Alberta T3P1H9 | 2026-07-23 | https://www.realtor.ca/real-estate/30069507/119-148-avenue-nw-calgary-livingston |
