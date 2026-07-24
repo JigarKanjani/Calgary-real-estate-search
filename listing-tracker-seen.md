@@ -187,3 +187,16 @@
 | A2331968 | $435,000 | Row / Townhouse | 628 Copperstone Manor SE, Calgary, Alberta T2Z5G4 | 2026-07-24 | https://www.realtor.ca/real-estate/30073978/628-copperstone-manor-se-calgary-copperfield |
 | A2331546 | $499,900 | House | 508 99 Avenue SE, Calgary, Alberta T2J0K2 | 2026-07-24 | https://www.realtor.ca/real-estate/30074382/508-99-avenue-se-calgary-willow-park |
 | A2332021 | $399,000 | Duplex | 148 Fonda Drive SE, Calgary, Alberta T2A6E6 | 2026-07-24 | https://www.realtor.ca/real-estate/30074258/148-fonda-drive-se-calgary-forest-heights |
+| A2314145 | $598,900 | House | 46 Somerside Place SW, Calgary, Alberta T2Y3V3 | 2026-07-24 | https://www.realtor.ca/real-estate/30077101/46-somerside-place-sw-calgary-somerset |
+| A2331939 | $599,900 | House | 167 Deerpath Court SE, Calgary, Alberta T2J6K9 | 2026-07-24 | https://www.realtor.ca/real-estate/30076410/167-deerpath-court-se-calgary-deer-ridge |
+| A2331805 | $599,900 | House | 619 Whiteridge Road NE, Calgary, Alberta T1Y2Y7 | 2026-07-24 | https://www.realtor.ca/real-estate/30076408/619-whiteridge-road-ne-calgary-whitehorn |
+| A2331181 | $599,900 | House | 232 Thames Close NW, Calgary, Alberta T2K5N4 | 2026-07-24 | https://www.realtor.ca/real-estate/30076401/232-thames-close-nw-calgary-thorncliffe |
+| A2331042 | $500,000 | Row / Townhouse | 302, 260 Rowley Way NW, Calgary, Alberta T3L0H5 | 2026-07-24 | https://www.realtor.ca/real-estate/30076162/302-260-rowley-way-nw-calgary-haskayne |
+| A2331903 | $595,000 | House | 182 Coventry Close NE, Calgary, Alberta T3K4A6 | 2026-07-24 | https://www.realtor.ca/real-estate/30075979/182-coventry-close-ne-calgary-coventry-hills |
+| A2332073 | $499,900 | House | 5071 Whitestone Way NE, Calgary, Alberta T1Y1T2 | 2026-07-24 | https://www.realtor.ca/real-estate/30075933/5071-whitestone-way-ne-calgary-whitehorn |
+| A2331687 | $350,000 | Duplex | 179 Pinecliff Close NE, Calgary, Alberta T1Y4N4 | 2026-07-24 | https://www.realtor.ca/real-estate/30075601/179-pinecliff-close-ne-calgary-pineridge |
+| A2331928 | $499,000 | House | 331 Coverdale Court NE, Calgary, Alberta T3K4J8 | 2026-07-24 | https://www.realtor.ca/real-estate/30075469/331-coverdale-court-ne-calgary-coventry-hills |
+| A2331249 | $495,000 | House | 67 Rivercrest Circle SE, Calgary, Alberta T2C4G4 | 2026-07-24 | https://www.realtor.ca/real-estate/30075464/67-rivercrest-circle-se-calgary-riverbend |
+| A2331963 | $437,770 | House | 44 Falshire Close NE, Calgary, Alberta T3J3A1 | 2026-07-24 | https://www.realtor.ca/real-estate/30075436/44-falshire-close-ne-calgary-falconridge |
+| A2323244 | $495,900 | Row / Townhouse | 418 Copperstone Manor SE, Calgary, Alberta T2Z5G3 | 2026-07-24 | https://www.realtor.ca/real-estate/30075186/418-copperstone-manor-se-calgary-copperfield |
+| A2297717 | $339,900 | Duplex | 3321 56 Street NE, Calgary, Alberta T1Y3Y7 | 2026-07-24 | https://www.realtor.ca/real-estate/30075030/3321-56-street-ne-calgary-temple |
