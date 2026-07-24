@@ -172,3 +172,14 @@
 | A2331016 | $375,000 | Duplex | 219 Penworth Drive SE, Calgary, Alberta T2A5E2 | 2026-07-23 | https://www.realtor.ca/real-estate/30070365/219-penworth-drive-se-calgary-penbrooke-meadows |
 | A2331428 | $510,000 | Row / Townhouse | 20604 Main Street SE, Calgary, Alberta T3M3G4 | 2026-07-23 | https://www.realtor.ca/real-estate/30070364/20604-main-street-se-calgary-seton |
 | A2309654 | $379,900 | Row / Townhouse | 123 148 Avenue NW, Calgary, Alberta T3P1E5 | 2026-07-23 | https://www.realtor.ca/real-estate/30069699/123-148-avenue-nw-calgary-sage-hill |
+| A2331964 | $269,900 | Row / Townhouse | 67, 3809 45 Street SW, Calgary, Alberta T3B1T3 | 2026-07-24 | https://www.realtor.ca/real-estate/30073965/67-3809-45-street-sw-calgary-glenbrook |
+| A2327719 | $359,000 | Row / Townhouse | 166, 388 Sandarac Drive NW, Calgary, Alberta T3K4E | 2026-07-24 | https://www.realtor.ca/real-estate/30073953/166-388-sandarac-drive-nw-calgary-sandstone-valley |
+| A2331931 | $319,900 | Row / Townhouse | 30, 380 Bermuda Drive NW, Calgary, Alberta T3K2B2 | 2026-07-24 | https://www.realtor.ca/real-estate/30073632/30-380-bermuda-drive-nw-calgary-beddington-heights |
+| A2325992 | $495,000 | House | 4940 Rundlewood Road NE, Calgary, Alberta T1Y1B4 | 2026-07-24 | https://www.realtor.ca/real-estate/30073596/4940-rundlewood-road-ne-calgary-rundle |
+| A2331916 | $599,900 | House | 130 Somerglen Way SW, Calgary, Alberta T2Y4B2 | 2026-07-24 | https://www.realtor.ca/real-estate/30073461/130-somerglen-way-sw-calgary-somerset |
+| A2331854 | $534,000 | House | 14695 Deer Ridge Drive SE, Calgary, Alberta T2J6A8 | 2026-07-24 | https://www.realtor.ca/real-estate/30072705/14695-deer-ridge-drive-se-calgary-deer-ridge |
+| A2331532 | $399,900 | House | 25 Erin Ridge Road SE, Calgary, Alberta T2B2W2 | 2026-07-24 | https://www.realtor.ca/real-estate/30072456/25-erin-ridge-road-se-calgary-erin-woods |
+| A2331648 | $425,900 | House | 1420 18 Avenue NW, Calgary, Alberta T2M0W6 | 2026-07-24 | https://www.realtor.ca/real-estate/30071431/1420-18-avenue-nw-calgary-capitol-hill |
+| A2329616 | $431,000 | House | 6823 4 Avenue SE, Calgary, Alberta T2A3V3 | 2026-07-24 | https://www.realtor.ca/real-estate/30071174/6823-4-avenue-se-calgary-penbrooke-meadows |
+| A2331636 | $589,000 | House | 3620 28 Street SE, Calgary, Alberta T2B2H9 | 2026-07-24 | https://www.realtor.ca/real-estate/30070940/3620-28-street-se-calgary-dover |
+| A2314409 | $489,900 | House | 21 Erin Meadow Manor SE, Calgary, Alberta T2B3P6 | 2026-07-24 | https://www.realtor.ca/real-estate/30070337/21-erin-meadow-manor-se-calgary-erin-woods |
