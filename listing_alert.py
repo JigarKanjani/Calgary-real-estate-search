@@ -17,14 +17,18 @@ Usage: python listing_alert.py [--min 150000] [--max 600000]
 
 import os
 import re
+import html
 import json
 import argparse
+import urllib.parse
 import urllib.request
 import urllib.error
+from bisect import bisect_left
 from datetime import datetime, timezone
 from pathlib import Path
 
 from realtor_client import fetch_listings
+from communities import community_info
 
 WORKSPACE    = Path(__file__).parent
 TRACKER_FILE = WORKSPACE / "listing-tracker-seen.md"
@@ -93,16 +97,62 @@ NEW_BUILD_MARKERS = [
     "pre-construction", "presale", "pre-sale", "builder",
 ]
 
+# ── Distressed / motivated-seller detection (from PublicRemarks) ──────────────
+# Distressed listings are ALWAYS surfaced and branded, bypassing the value and
+# freshness gates, so you never miss a potential deal.
+DISTRESS_STRONG = [
+    "foreclosure", "judicial sale", "court order", "court-order",
+    "court ordered", "power of sale", "bank owned", "bank-owned",
+    "receiver", "receivership", "bankruptcy", "estate sale", "probate",
+    "tax sale", "distress",
+]
+DISTRESS_SOFT = [
+    "motivated seller", "motivated", "must sell", "priced to sell",
+    "bring all offers", "bring an offer", "as is", "as-is", "as is where is",
+    "quick possession", "handyman", "fixer", "fixer-upper", "tlc",
+    "needs work", "renovation opportunity", "below market", "urgent sale",
+    "relocating", "sold as is", "great investment", "handyman special",
+]
 
-def tg_send(text, chat_id):
-    """Send a plain-text message to Telegram. Auto-trims to 4000 chars."""
+# Feature highlights parsed from PublicRemarks (income + desirability signals).
+FEATURE_MARKERS = [
+    ("legal suite",        "💰 suite (rental income)"),
+    ("legal basement",     "💰 suite (rental income)"),
+    ("secondary suite",    "💰 suite (rental income)"),
+    ("basement suite",     "💰 suite (rental income)"),
+    ("illegal suite",      "💰 suite (rental income)"),
+    ("walk-out",           "🏔️ walkout basement"),
+    ("walkout",            "🏔️ walkout basement"),
+    ("backing onto",       "🌳 backs onto green space"),
+    ("backs onto",         "🌳 backs onto green space"),
+    ("backs on to",        "🌳 backs onto green space"),
+    ("corner lot",         "📐 corner lot"),
+    ("pie lot",            "📐 large pie lot"),
+    ("pie-shaped",         "📐 large pie lot"),
+    ("rv parking",         "🚐 RV parking"),
+    ("triple garage",      "🚗 triple garage"),
+    ("heated garage",      "🚗 heated garage"),
+    ("double garage",      "🚗 double garage"),
+    ("oversized garage",   "🚗 oversized garage"),
+    ("newly renovated",    "✨ renovated"),
+    ("fully renovated",    "✨ renovated"),
+    ("newer roof",         "✨ recent updates"),
+    ("air condition",      "❄️ A/C"),
+]
+
+
+def tg_send(text, chat_id, html_mode=True):
+    """Send a message to Telegram (HTML parse mode). Auto-trims to 4000 chars."""
     if len(text) > 4000:
         text = text[:3990] + "..."
-    payload = json.dumps({
+    body = {
         "chat_id": str(chat_id),
         "text": text,
         "disable_web_page_preview": True,
-    }).encode("utf-8")
+    }
+    if html_mode:
+        body["parse_mode"] = "HTML"
+    payload = json.dumps(body).encode("utf-8")
     req = urllib.request.Request(
         f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
         data=payload,
@@ -163,37 +213,63 @@ def type_ok(listing):
     return any(w in ptype for w in WANTED_TYPES)
 
 
-def _percentile(sorted_vals, pct):
-    """Value at the given percentile of an ascending-sorted list."""
-    if not sorted_vals:
+def value_metric(listing):
+    """(value, basis): price per LOT sqft preferred (land = appreciating asset),
+    else price per interior sqft. Lower value = better deal."""
+    ppl = listing.get("price_per_lot_sqft")
+    if ppl:
+        return ppl, "lot"
+    pps = listing.get("price_per_sqft")
+    if pps:
+        return pps, "interior"
+    return None, None
+
+
+def build_value_dists(listings):
+    """Ascending metric distributions per basis, over the eligible market."""
+    lot, interior = [], []
+    for l in listings:
+        if not (price_ok(l) and type_ok(l)):
+            continue
+        v, basis = value_metric(l)
+        if basis == "lot":
+            lot.append(v)
+        elif basis == "interior":
+            interior.append(v)
+    lot.sort()
+    interior.sort()
+    return {"lot": lot, "interior": interior}
+
+
+def _cutoff(sorted_vals, pct):
+    """Metric threshold for the top pct% (or None if too few to rank)."""
+    if len(sorted_vals) < MIN_VALUE_POP:
         return None
     import math
-    n = len(sorted_vals)
-    idx = min(n - 1, max(0, math.ceil(pct / 100.0 * n) - 1))
+    idx = min(len(sorted_vals) - 1, max(0, math.ceil(pct / 100.0 * len(sorted_vals)) - 1))
     return sorted_vals[idx]
 
 
-def value_cutoff(listings):
-    """price/sqft threshold for the top VALUE_TOP_PCT% by area/price.
-
-    Returns (cutoff, population_size). cutoff is None when there aren't enough
-    rated listings to rank meaningfully (value gate is then skipped).
-    """
-    pps = sorted(l["price_per_sqft"] for l in listings
-                 if l.get("price_per_sqft") and price_ok(l) and type_ok(l))
-    if len(pps) < MIN_VALUE_POP:
-        return None, len(pps)
-    return _percentile(pps, VALUE_TOP_PCT), len(pps)
-
-
-def value_ok(listing, cutoff):
-    """True if the listing is in the top VALUE_TOP_PCT% by area/price."""
-    if cutoff is None:            # not enough data to rank — don't gate
-        return True
-    pps = listing.get("price_per_sqft")
-    if pps is None:
+def value_ok(listing, dists):
+    """True if the listing is in the top VALUE_TOP_PCT% by its own basis."""
+    v, basis = value_metric(listing)
+    if basis is None:
         return not REQUIRE_AREA
-    return pps <= cutoff
+    cutoff = _cutoff(dists[basis], VALUE_TOP_PCT)
+    if cutoff is None:            # not enough data in this basis — don't gate
+        return True
+    return v <= cutoff
+
+
+def value_percentile(listing, dists):
+    """0.0 (best value in market) .. 1.0 (worst). None if unrated."""
+    v, basis = value_metric(listing)
+    if basis is None:
+        return None
+    arr = dists.get(basis) or []
+    if not arr:
+        return None
+    return bisect_left(arr, v) / len(arr)
 
 
 def price_ok(listing):
@@ -241,43 +317,152 @@ def age_label(hours):
     return f"{int(round(hours / 24))} day(s) ago"
 
 
-def format_listing_message(listing, age_hours=None):
+def distress_flags(listing):
+    """(is_distressed, label). Scans PublicRemarks for distress/motivation."""
+    text = (listing.get("remarks") or "").lower()
+    if not text:
+        return False, ""
+    for kw in DISTRESS_STRONG:
+        if kw in text:
+            return True, kw.replace("-", " ").title()
+    for kw in DISTRESS_SOFT:
+        if kw in text:
+            return True, "Motivated seller"
+    return False, ""
+
+
+def build_highlights(listing, info):
+    """Merge community facts + listing features into a highlight list."""
+    hi = list(info.get("highlights", []))
+
+    # Parking (from the Parking array), if not already covered by remarks.
+    pt = listing.get("parking_total") or 0
+    names = " ".join(listing.get("parking_names") or []).lower()
+    if "garage" in names or pt >= 2:
+        if pt >= 3:
+            hi.append(f"🚗 {pt} parking / garage")
+        elif "garage" in names:
+            hi.append("🚗 garage parking")
+        elif pt >= 2:
+            hi.append(f"🅿️ {pt} parking spaces")
+
+    # Feature keywords from the description.
+    text = (listing.get("remarks") or "").lower()
+    for kw, label in FEATURE_MARKERS:
+        if kw in text and label not in hi:
+            hi.append(label)
+
+    # De-dupe preserving order, cap length for a tidy message.
+    seen, out = set(), []
+    for h in hi:
+        if h not in seen:
+            seen.add(h)
+            out.append(h)
+    return out[:6]
+
+
+def rating_1to10(listing, dists, info, distressed):
+    """Blend value rank + location + type + motivation into a 1–10 score."""
+    # Value (0–5): best value in the market scores highest.
+    p = value_percentile(listing, dists)
+    if p is None:
+        value_pts = 2                      # un-rated -> neutral
+    elif p <= 0.10:
+        value_pts = 5
+    elif p <= 0.20:
+        value_pts = 4
+    elif p <= 0.40:
+        value_pts = 3
+    elif p <= 0.60:
+        value_pts = 2
+    else:
+        value_pts = 1
+
+    # Location (0–3) from the community score (2..5 -> 0..3).
+    location_pts = min(3, max(0, info.get("location_score", 2) - 2))
+
+    # Property type (0–1): land-owning types score for appreciation.
+    t = (listing.get("type") + " " + listing.get("prop_type")).lower()
+    type_pts = 1 if any(k in t for k in ("house", "single family", "semi", "duplex")) else 0
+
+    motivated_pts = 1 if distressed else 0
+
+    return max(1, min(10, value_pts + location_pts + type_pts + motivated_pts))
+
+
+def maps_link(address):
+    """Google Maps search URL for an address (opens the location)."""
+    a = address or ""
+    if "calgary" not in a.lower():
+        a = f"{a}, Calgary, AB"
+    q = urllib.parse.quote(a)
+    return f"https://www.google.com/maps/search/?api=1&query={q}"
+
+
+def _esc(s):
+    return html.escape(str(s or ""))
+
+
+def format_listing_message(listing, age_hours=None, dists=None):
+    dists = dists or {"lot": [], "interior": []}
+    slug = listing.get("community") or ""
+    info = community_info(slug) if slug else {"name": "", "highlights": [],
+                                              "location_score": 2}
+    distressed, dlabel = distress_flags(listing)
+    score = rating_1to10(listing, dists, info, distressed)
+
+    # Spec line.
     bits = []
     if listing["bedrooms"]:
         bits.append(f"{listing['bedrooms']} bed")
     if listing["bathrooms"]:
         bits.append(f"{listing['bathrooms']} bath")
-    if listing["size"]:
-        bits.append(listing["size"])
+    if listing.get("size_sqft"):
+        bits.append(f"{listing['size_sqft']:,.0f} sqft")
+    if listing.get("lot_sqft"):
+        bits.append(f"lot {listing['lot_sqft']:,.0f} sqft")
     spec = " · ".join(bits)
 
-    ptype = listing["type"] or "Residential"
-
-    # Prefer Realtor.ca's own "5 hours ago" string; else our computed label.
+    ptype = listing.get("type") or "Residential"
     listed = listing.get("time_on_realtor") or age_label(age_hours)
+    dom = f"{int(round(age_hours / 24))}d on market" if age_hours and age_hours >= 24 else ""
 
-    msg = (
-        f"🏠 New Calgary Listing — MLS# {listing['mls']}\n"
-        f"📍 {listing['address'] or 'Address not listed'}\n"
-        f"💰 {listing['price'] or 'Price not listed'}\n"
-        f"🏢 {ptype}" + (f" · {spec}" if spec else "") + "\n"
-    )
-    if listing["condo_fee"]:
-        msg += f"💵 Condo fee: {listing['condo_fee']}\n"
-    if listing["ownership"]:
-        msg += f"📄 {listing['ownership']}\n"
-    # Value metric: price per sqft (lower = better area-to-price ratio).
-    if listing.get("price_per_sqft"):
-        msg += f"📐 ${listing['price_per_sqft']:,.0f}/sqft (value pick)\n"
+    stars = "⭐" * int(round(score / 2)) or "⭐"
+    address = listing["address"] or "Address not listed"
+    community_line = _esc(info["name"]) if info["name"] else ""
+
+    # Value metric line (lot-based preferred).
+    val_line = ""
+    v, basis = value_metric(listing)
+    if basis == "lot":
+        val_line = f"🌳 <b>${v:,.0f}/lot-sqft</b> (land value)"
+    elif basis == "interior":
+        val_line = f"📐 <b>${v:,.0f}/sqft</b> (area value)"
     else:
-        msg += "📐 area not listed — review manually\n"
-    if listed:
-        msg += f"🕒 Listed: {listed}\n"
-    msg += (
-        f"\n"
-        f"🔗 {listing['url']}"
-    )
-    return msg[:3900]
+        val_line = "📐 area/lot not listed — review manually"
+
+    lines = []
+    if distressed:
+        lines.append(f"🔥🔥 <b>DISTRESSED / {_esc(dlabel).upper()}</b> 🔥🔥")
+    lines.append(f"🏠 <b>{_esc(ptype)}</b> — MLS# {_esc(listing['mls'])}")
+    lines.append(f"💰 <b>{_esc(listing['price'] or 'Price n/a')}</b>  ·  {stars} <b>{score}/10</b>")
+    lines.append(f"📍 <a href=\"{maps_link(address)}\">{_esc(address)}</a>  🗺️")
+    if community_line:
+        lines.append(f"🏘️ <b>{community_line}</b>")
+    if spec:
+        lines.append(f"🛏️ {_esc(spec)}")
+    lines.append(val_line)
+    if listing.get("condo_fee"):
+        lines.append(f"💵 Fee: {_esc(listing['condo_fee'])}")
+    fresh = " · ".join(x for x in [f"🕒 {listed}" if listed else "", dom] if x)
+    if fresh:
+        lines.append(fresh)
+    hl = build_highlights(listing, info)
+    if hl:
+        lines.append("✨ " + "  ·  ".join(hl))
+    lines.append(f"🔗 <a href=\"{_esc(listing['url'])}\">View on Realtor.ca</a>")
+
+    return "\n".join(lines)[:3900]
 
 
 def main():
@@ -290,7 +475,7 @@ def main():
     print(f"\n{'='*60}")
     print(f"CALGARY LISTINGS — {datetime.now().strftime('%Y-%m-%d %H:%M')} MST")
     print(f"Price ${args.min:,}–${args.max:,} | Freshness: {age_cap} | "
-          f"Value: top {VALUE_TOP_PCT:g}% area/price | "
+          f"Value: top {VALUE_TOP_PCT:g}% lot/price (area fallback) | "
           f"Condos: {'excluded' if EXCLUDE_CONDOS else 'included'} | "
           f"Recipients: {len(CHAT_IDS)}")
     print(f"{'='*60}")
@@ -311,7 +496,8 @@ def main():
         f"🚀 Calgary listings scan started "
         f"({datetime.now().strftime('%Y-%m-%d %H:%M')} MST)\n"
         f"💰 ${args.min:,}–${args.max:,} · townhouses / semi / houses (no condos)\n"
-        f"📐 only top {VALUE_TOP_PCT:g}% by area-to-price value\n"
+        f"🌳 only top {VALUE_TOP_PCT:g}% by lot-to-price value (+ ratings & highlights)\n"
+        f"🔥 all distressed / motivated sales flagged\n"
         f"{fresh_note}\n"
         f"⏳ New value picks will land here shortly."
     )
@@ -329,18 +515,20 @@ def main():
         print("  [WARN] No listing timestamps in results — cannot apply the "
               f"{MAX_AGE_HOURS:g}h freshness cap; falling back to dedup-only.")
 
-    # Value ranking: derive the area/price cutoff from the WHOLE market fetched
-    # (all non-condo, in-price listings with a known area), so "top X%" is
-    # measured against the market — not just the few fresh ones.
-    cutoff, pop = value_cutoff(listings)
-    if cutoff is not None:
-        print(f"  [Value] top {VALUE_TOP_PCT:g}% cutoff = ${cutoff:,.0f}/sqft "
-              f"(from {pop} rated listings)")
-    else:
-        print(f"  [Value] only {pop} rated listings (< {MIN_VALUE_POP}) — "
-              f"value gate skipped this run")
+    # Value ranking: build price-per-unit distributions from the WHOLE market
+    # (all non-condo, in-price listings), per basis (lot preferred, else
+    # interior), so "top X%" is measured against the market. Log lot coverage.
+    dists = build_value_dists(listings)
+    lot_n, int_n = len(dists["lot"]), len(dists["interior"])
+    lot_cut = _cutoff(dists["lot"], VALUE_TOP_PCT)
+    int_cut = _cutoff(dists["interior"], VALUE_TOP_PCT)
+    print(f"  [Value] market: {lot_n} with lot size, {int_n} with interior only.")
+    if lot_cut:
+        print(f"          top {VALUE_TOP_PCT:g}% lot cutoff = ${lot_cut:,.0f}/lot-sqft")
+    if int_cut:
+        print(f"          top {VALUE_TOP_PCT:g}% area cutoff = ${int_cut:,.0f}/sqft")
 
-    sent = 0
+    sent = distressed_sent = 0
     for listing in listings:
         if sent >= MAX_PER_RUN:
             break
@@ -353,22 +541,27 @@ def main():
         if not type_ok(listing):
             continue
 
-        # Freshness cap: only surface listings put up within MAX_AGE_HOURS.
+        # Distressed / motivated sales are ALWAYS surfaced — they bypass the
+        # freshness and value gates so a potential deal is never missed.
+        is_distressed, _dlabel = distress_flags(listing)
+
         age = listing_age_hours(listing, now_epoch)
-        if MAX_AGE_HOURS > 0 and have_ts:
-            if age is None or age > MAX_AGE_HOURS:
+        if not is_distressed:
+            # Freshness cap: only listings put up within MAX_AGE_HOURS.
+            if MAX_AGE_HOURS > 0 and have_ts:
+                if age is None or age > MAX_AGE_HOURS:
+                    continue
+            # Value gate: only the top VALUE_TOP_PCT% by price-per-unit.
+            if not value_ok(listing, dists):
                 continue
 
-        # Value gate: only the top VALUE_TOP_PCT% by area-to-price ratio.
-        if not value_ok(listing, cutoff):
-            continue
-
-        msg = format_listing_message(listing, age_hours=age)
+        msg = format_listing_message(listing, age_hours=age, dists=dists)
         age_disp = age_label(age) or "age n/a"
-        pps = listing.get("price_per_sqft")
-        pps_disp = f"${pps:,.0f}/sqft" if pps else "n/a"
-        print(f"  -> {listing['mls']} | {listing['price']} | {pps_disp} | "
-              f"{age_disp} | {listing['address']}")
+        v, basis = value_metric(listing)
+        v_disp = f"${v:,.0f}/{basis[:3]}" if basis else "n/a"
+        tag = " 🔥DISTRESSED" if is_distressed else ""
+        print(f"  -> {listing['mls']} | {listing['price']} | {v_disp} | "
+              f"{age_disp}{tag} | {listing['address']}")
 
         delivered = False
         for cid in CHAT_IDS:
@@ -382,13 +575,16 @@ def main():
         append_tracker(listing)
         if delivered or not CHAT_IDS:
             sent += 1
+            if is_distressed:
+                distressed_sent += 1
 
     fresh_txt = f" · last {MAX_AGE_HOURS:g}h" if MAX_AGE_HOURS > 0 else ""
+    dist_txt = f" · 🔥 {distressed_sent} distressed" if distressed_sent else ""
     summary_msg = (
         f"✅ Calgary listings scan done — "
         f"{datetime.now().strftime('%Y-%m-%d %H:%M')} MST\n"
-        f"{sent} new value pick(s) · ${args.min:,}–${args.max:,}{fresh_txt} · "
-        f"top {VALUE_TOP_PCT:g}% area/price\n"
+        f"{sent} new pick(s){dist_txt} · ${args.min:,}–${args.max:,}{fresh_txt} · "
+        f"top {VALUE_TOP_PCT:g}% value\n"
         f"Source: Realtor.ca"
     )
     print(f"\n{summary_msg}")

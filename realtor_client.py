@@ -208,6 +208,26 @@ def _parse_size_sqft(size_str):
     return val if val > 0 else None
 
 
+def _parse_land_sqft(size_str):
+    """Lot size string -> sqft. Handles acres, m², sqft. None if absent/zero."""
+    if not size_str:
+        return None
+    s = str(size_str).lower().replace(",", "")
+    m = re.search(r"(\d+(?:\.\d+)?)", s)
+    if not m:
+        return None
+    val = float(m.group(1))
+    if val <= 0:
+        return None
+    if "ac" in s:                       # acres
+        val *= 43560
+    elif "hectare" in s:
+        val *= 107639
+    elif "m2" in s or "sqm" in s or "m²" in s or "square met" in s:
+        val *= 10.7639
+    return val if val > 0 else None
+
+
 def _parse_inserted_date(val):
     """Parse Realtor.ca InsertedDateUTC into a Unix epoch (seconds), or None.
 
@@ -254,20 +274,47 @@ def _normalize(result):
 
     price_int = _price_to_int(prop.get("Price", ""))
     size_sqft = _parse_size_sqft(building.get("SizeInterior"))
-    # Value metric: price per interior square foot (lower = better value).
+    # Value metrics: price per interior sqft and, when available, price per lot
+    # sqft (land = the appreciating asset). Lower = better value.
     pps = round(price_int / size_sqft, 2) if (price_int and size_sqft) else None
 
+    land = result.get("Land", {}) or {}
+    lot_sqft = _parse_land_sqft(land.get("SizeTotal") or land.get("SizeFrontage"))
+    ppl = round(price_int / lot_sqft, 2) if (price_int and lot_sqft) else None
+
+    # Parking (array of {Name, ParkingSpaceTotal}) — may be under Property or top.
+    parking = prop.get("Parking") or result.get("Parking") or []
+    park_total, park_names = 0, []
+    if isinstance(parking, list):
+        for p in parking:
+            if not isinstance(p, dict):
+                continue
+            try:
+                park_total += int(re.sub(r"[^\d]", "", str(p.get("ParkingSpaceTotal") or "0")) or 0)
+            except Exception:
+                pass
+            if p.get("Name"):
+                park_names.append(str(p["Name"]).strip())
+
+    from communities import community_from_url
     return {
         "mls":        str(result.get("MlsNumber", "")).strip(),
         "price":      prop.get("Price", ""),
         "price_int":  price_int,
         "address":    address.get("AddressText", "").replace("|", ", ").strip(),
         "type":       (building.get("Type") or prop.get("Type") or "").strip(),
+        "prop_type":  (prop.get("Type") or "").strip(),
         "bedrooms":   (building.get("Bedrooms") or "").strip(),
         "bathrooms":  (building.get("BathroomTotal") or "").strip(),
         "size":       (building.get("SizeInterior") or "").strip(),
         "size_sqft":  size_sqft,
         "price_per_sqft":  pps,
+        "lot_sqft":   lot_sqft,
+        "price_per_lot_sqft": ppl,
+        "parking_total":  park_total,
+        "parking_names":  park_names,
+        "remarks":    str(result.get("PublicRemarks") or "").strip(),
+        "community":  community_from_url(url),
         "condo_fee":  str(condo_fee).strip() if condo_fee else "",
         "ownership":  (prop.get("OwnershipType") or "").strip(),
         "listed_epoch":    _parse_inserted_date(inserted),

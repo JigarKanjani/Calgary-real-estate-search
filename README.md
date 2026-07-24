@@ -9,8 +9,16 @@ Mirrors the mechanism of a job-alert bot, but for real estate.
   houses — resale only, **no condo apartments** (new-construction excluded)
 - **Area:** City of Calgary
 - **Freshness:** only listings put up in the **last 12 hours** (newest-first)
-- **Value:** only the **top 30% by area-to-price ratio** (best $/sqft) — measured
-  against the whole current market, so you get the genuine value picks
+- **Value:** only the **top N% by lot-to-price** (land = the appreciating asset),
+  falling back to **area-to-price** when lot size isn't in the payload — measured
+  against the whole current market
+- **Rating:** every listing gets a **1–10 score** blending value rank, community
+  location quality, property type, and motivation
+- **Highlights:** per-community facts (CTrain, Stoney/Deerfoot, lake, parks,
+  schools, rental demand) + listing features (suite, garage, walkout, lot)
+- **Distressed sales:** foreclosure / court-order / estate / motivated listings
+  are **always surfaced and branded**, bypassing the freshness + value gates
+- **Clickable address:** links straight to Google Maps
 - **Dedup:** never sends the same MLS number twice (committed tracker file)
 
 ---
