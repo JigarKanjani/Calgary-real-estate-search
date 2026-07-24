@@ -183,3 +183,5 @@
 | A2329616 | $431,000 | House | 6823 4 Avenue SE, Calgary, Alberta T2A3V3 | 2026-07-24 | https://www.realtor.ca/real-estate/30071174/6823-4-avenue-se-calgary-penbrooke-meadows |
 | A2331636 | $589,000 | House | 3620 28 Street SE, Calgary, Alberta T2B2H9 | 2026-07-24 | https://www.realtor.ca/real-estate/30070940/3620-28-street-se-calgary-dover |
 | A2314409 | $489,900 | House | 21 Erin Meadow Manor SE, Calgary, Alberta T2B3P6 | 2026-07-24 | https://www.realtor.ca/real-estate/30070337/21-erin-meadow-manor-se-calgary-erin-woods |
+| A2331972 | $599,900 | House | 226 Sandstone Drive NW, Calgary, Alberta T3K3B9 | 2026-07-24 | https://www.realtor.ca/real-estate/30073979/226-sandstone-drive-nw-calgary-sandstone-valley |
+| A2331968 | $435,000 | Row / Townhouse | 628 Copperstone Manor SE, Calgary, Alberta T2Z5G4 | 2026-07-24 | https://www.realtor.ca/real-estate/30073978/628-copperstone-manor-se-calgary-copperfield |
