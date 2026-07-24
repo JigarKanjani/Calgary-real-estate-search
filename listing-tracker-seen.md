@@ -185,3 +185,5 @@
 | A2314409 | $489,900 | House | 21 Erin Meadow Manor SE, Calgary, Alberta T2B3P6 | 2026-07-24 | https://www.realtor.ca/real-estate/30070337/21-erin-meadow-manor-se-calgary-erin-woods |
 | A2331972 | $599,900 | House | 226 Sandstone Drive NW, Calgary, Alberta T3K3B9 | 2026-07-24 | https://www.realtor.ca/real-estate/30073979/226-sandstone-drive-nw-calgary-sandstone-valley |
 | A2331968 | $435,000 | Row / Townhouse | 628 Copperstone Manor SE, Calgary, Alberta T2Z5G4 | 2026-07-24 | https://www.realtor.ca/real-estate/30073978/628-copperstone-manor-se-calgary-copperfield |
+| A2331546 | $499,900 | House | 508 99 Avenue SE, Calgary, Alberta T2J0K2 | 2026-07-24 | https://www.realtor.ca/real-estate/30074382/508-99-avenue-se-calgary-willow-park |
+| A2332021 | $399,000 | Duplex | 148 Fonda Drive SE, Calgary, Alberta T2A6E6 | 2026-07-24 | https://www.realtor.ca/real-estate/30074258/148-fonda-drive-se-calgary-forest-heights |
