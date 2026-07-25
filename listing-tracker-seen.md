@@ -200,3 +200,13 @@
 | A2331963 | $437,770 | House | 44 Falshire Close NE, Calgary, Alberta T3J3A1 | 2026-07-24 | https://www.realtor.ca/real-estate/30075436/44-falshire-close-ne-calgary-falconridge |
 | A2323244 | $495,900 | Row / Townhouse | 418 Copperstone Manor SE, Calgary, Alberta T2Z5G3 | 2026-07-24 | https://www.realtor.ca/real-estate/30075186/418-copperstone-manor-se-calgary-copperfield |
 | A2297717 | $339,900 | Duplex | 3321 56 Street NE, Calgary, Alberta T1Y3Y7 | 2026-07-24 | https://www.realtor.ca/real-estate/30075030/3321-56-street-ne-calgary-temple |
+| A2332045 | $549,900 | House | 6420 18 Street SE, Calgary, Alberta T2C0M5 | 2026-07-25 | https://www.realtor.ca/real-estate/30078374/6420-18-street-se-calgary-ogden |
+| A2331907 | $569,900 | House | 961 Ranchview Crescent NW, Calgary, Alberta T3G1A4 | 2026-07-25 | https://www.realtor.ca/real-estate/30078334/961-ranchview-crescent-nw-calgary-ranchlands |
+| A2332199 | $430,000 | Row / Townhouse | 93, 145 Chelsea Mews, Chestermere, Alberta T1X3H1 | 2026-07-25 | https://www.realtor.ca/real-estate/30078152/93-145-chelsea-mews-chestermere-chelsea |
+| A2332194 | $599,900 | House | 755 Penbrooke Road SE, Calgary, Alberta T2A3T3 | 2026-07-25 | https://www.realtor.ca/real-estate/30078009/755-penbrooke-road-se-calgary-penbrooke-meadows |
+| A2332187 | $469,900 | House | 193 Martindale Drive NE, Calgary, Alberta T3J3X9 | 2026-07-25 | https://www.realtor.ca/real-estate/30077980/193-martindale-drive-ne-calgary-martindale |
+| A2332183 | $595,000 | House | 528 Whiteridge Way NE, Calgary, Alberta T1Y2Y4 | 2026-07-25 | https://www.realtor.ca/real-estate/30077977/528-whiteridge-way-ne-calgary-whitehorn |
+| A2332164 | $510,000 | House | 223 72 Avenue NE, Calgary, Alberta T2K0N8 | 2026-07-25 | https://www.realtor.ca/real-estate/30077647/223-72-avenue-ne-calgary-huntington-hills |
+| A2332141 | $420,000 | Row / Townhouse | 6527 Huntsbay Road NW, Calgary, Alberta T2K5R3 | 2026-07-25 | https://www.realtor.ca/real-estate/30077490/6527-huntsbay-road-nw-calgary-huntington-hills |
+| A2332154 | $374,900 | House | 112 Macewan Meadow Crescent NW, Calgary, Alberta T | 2026-07-25 | https://www.realtor.ca/real-estate/30077488/112-macewan-meadow-crescent-nw-calgary-macewan-glen |
+| A2330898 | $599,900 | House | 1 Thorncliffe Crescent NW, Calgary, Alberta T2K3A9 | 2026-07-25 | https://www.realtor.ca/real-estate/30077250/1-thorncliffe-crescent-nw-calgary-thorncliffe |
