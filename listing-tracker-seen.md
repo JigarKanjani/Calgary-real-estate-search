@@ -215,3 +215,4 @@
 | A2296551 | $599,000 | House | 11 Beddington Green NE, Calgary, Alberta T3K1M7 | 2026-07-25 | https://www.realtor.ca/real-estate/30078873/11-beddington-green-ne-calgary-beddington-heights |
 | A2332250 | $439,000 | Row / Townhouse | 70 Brae Glen Lane SW, Calgary, Alberta T2W1B6 | 2026-07-25 | https://www.realtor.ca/real-estate/30078859/70-brae-glen-lane-sw-calgary-braeside |
 | A2312008 | $600,000 | House | 39 Hillgrove Crescent SW, Calgary, Alberta T2V3K8 | 2026-07-25 | https://www.realtor.ca/real-estate/30078852/39-hillgrove-crescent-sw-calgary-haysboro |
+| A2332088 | $349,900 | Row / Townhouse | 14605 Shawnee Gate SW, Calgary, Alberta T2Y0K4 | 2026-07-25 | https://www.realtor.ca/real-estate/30079029/14605-shawnee-gate-sw-calgary-shawnee-slopes |
