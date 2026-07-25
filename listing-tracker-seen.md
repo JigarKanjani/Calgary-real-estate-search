@@ -216,3 +216,8 @@
 | A2332250 | $439,000 | Row / Townhouse | 70 Brae Glen Lane SW, Calgary, Alberta T2W1B6 | 2026-07-25 | https://www.realtor.ca/real-estate/30078859/70-brae-glen-lane-sw-calgary-braeside |
 | A2312008 | $600,000 | House | 39 Hillgrove Crescent SW, Calgary, Alberta T2V3K8 | 2026-07-25 | https://www.realtor.ca/real-estate/30078852/39-hillgrove-crescent-sw-calgary-haysboro |
 | A2332088 | $349,900 | Row / Townhouse | 14605 Shawnee Gate SW, Calgary, Alberta T2Y0K4 | 2026-07-25 | https://www.realtor.ca/real-estate/30079029/14605-shawnee-gate-sw-calgary-shawnee-slopes |
+| A2332251 | $264,998 | Row / Townhouse | 104, 6919 Elbow Drive SW, Calgary, Alberta T2V0E6 | 2026-07-25 | https://www.realtor.ca/real-estate/30079761/104-6919-elbow-drive-sw-calgary-kelvin-grove |
+| A2332279 | $580,000 | House | 216 Millbank Road SW, Calgary, Alberta T2Y2Z2 | 2026-07-25 | https://www.realtor.ca/real-estate/30079652/216-millbank-road-sw-calgary-millrise |
+| A2329888 | $524,900 | House | 38 Hidden Spring Circle NW, Calgary, Alberta T3A5H | 2026-07-25 | https://www.realtor.ca/real-estate/30079617/38-hidden-spring-circle-nw-calgary-hidden-valley |
+| A2332229 | $560,000 | House | 8348 Bowness Road NW, Calgary, Alberta T3B0H6 | 2026-07-25 | https://www.realtor.ca/real-estate/30079573/8348-bowness-road-nw-calgary-bowness |
+| A2331558 | $519,900 | House | 227 Manora Crescent NE, Calgary, Alberta T2A4S4 | 2026-07-25 | https://www.realtor.ca/real-estate/30079531/227-manora-crescent-ne-calgary-marlborough-park |
