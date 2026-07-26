@@ -222,3 +222,5 @@
 | A2332229 | $560,000 | House | 8348 Bowness Road NW, Calgary, Alberta T3B0H6 | 2026-07-25 | https://www.realtor.ca/real-estate/30079573/8348-bowness-road-nw-calgary-bowness |
 | A2331558 | $519,900 | House | 227 Manora Crescent NE, Calgary, Alberta T2A4S4 | 2026-07-25 | https://www.realtor.ca/real-estate/30079531/227-manora-crescent-ne-calgary-marlborough-park |
 | A2332303 | $549,000 | Duplex | 162 Millbank Hill SW, Calgary, Alberta T2Y2Z2 | 2026-07-26 | https://www.realtor.ca/real-estate/30079989/162-millbank-hill-sw-calgary-millrise |
+| A2332375 | $499,900 | House | 272 Huntington Close NE, Calgary, Alberta T2K5B3 | 2026-07-26 | https://www.realtor.ca/real-estate/30080622/272-huntington-close-ne-calgary-huntington-hills |
+| A2314202 | $359,900 | Duplex | 60 Rundlelawn Green NE, Calgary, Alberta T1Y6S5 | 2026-07-26 | https://www.realtor.ca/real-estate/30080569/60-rundlelawn-green-ne-calgary-rundle |
