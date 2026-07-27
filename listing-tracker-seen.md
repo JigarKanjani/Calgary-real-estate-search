@@ -226,3 +226,6 @@
 | A2314202 | $359,900 | Duplex | 60 Rundlelawn Green NE, Calgary, Alberta T1Y6S5 | 2026-07-26 | https://www.realtor.ca/real-estate/30080569/60-rundlelawn-green-ne-calgary-rundle |
 | A2331829 | $535,000 | House | 23 Fielding Drive SE, Calgary, Alberta T2H1H1 | 2026-07-27 | https://www.realtor.ca/real-estate/30080957/23-fielding-drive-se-calgary-fairview |
 | A2332414 | $409,900 | Row / Townhouse | 580 Savanna Boulevard, Calgary, Alberta T3N1A8 | 2026-07-27 | https://www.realtor.ca/real-estate/30081140/580-savanna-boulevard-calgary-saddle-ridge |
+| A2332582 | $275,000 | House | 99 Applegrove Crescent SE, Calgary, Alberta T2A7R5 | 2026-07-27 | https://www.realtor.ca/real-estate/30083347/99-applegrove-crescent-se-calgary-applewood-park |
+| A2332564 | $430,000 | Row / Townhouse | 84, 145 Chelsea Mews, Chestermere, Alberta T1X3H1 | 2026-07-27 | https://www.realtor.ca/real-estate/30083014/84-145-chelsea-mews-chestermere-chelsea |
+| A2332454 | $469,999 | House | 1436 Robson Crescent SE, Calgary, Alberta T2A1Y7 | 2026-07-27 | https://www.realtor.ca/real-estate/30082545/1436-robson-crescent-se-calgary-albert-parkradisson-heights |
