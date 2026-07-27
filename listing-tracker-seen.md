@@ -224,3 +224,4 @@
 | A2332303 | $549,000 | Duplex | 162 Millbank Hill SW, Calgary, Alberta T2Y2Z2 | 2026-07-26 | https://www.realtor.ca/real-estate/30079989/162-millbank-hill-sw-calgary-millrise |
 | A2332375 | $499,900 | House | 272 Huntington Close NE, Calgary, Alberta T2K5B3 | 2026-07-26 | https://www.realtor.ca/real-estate/30080622/272-huntington-close-ne-calgary-huntington-hills |
 | A2314202 | $359,900 | Duplex | 60 Rundlelawn Green NE, Calgary, Alberta T1Y6S5 | 2026-07-26 | https://www.realtor.ca/real-estate/30080569/60-rundlelawn-green-ne-calgary-rundle |
+| A2331829 | $535,000 | House | 23 Fielding Drive SE, Calgary, Alberta T2H1H1 | 2026-07-27 | https://www.realtor.ca/real-estate/30080957/23-fielding-drive-se-calgary-fairview |
