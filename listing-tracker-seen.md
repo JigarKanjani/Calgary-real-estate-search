@@ -225,3 +225,4 @@
 | A2332375 | $499,900 | House | 272 Huntington Close NE, Calgary, Alberta T2K5B3 | 2026-07-26 | https://www.realtor.ca/real-estate/30080622/272-huntington-close-ne-calgary-huntington-hills |
 | A2314202 | $359,900 | Duplex | 60 Rundlelawn Green NE, Calgary, Alberta T1Y6S5 | 2026-07-26 | https://www.realtor.ca/real-estate/30080569/60-rundlelawn-green-ne-calgary-rundle |
 | A2331829 | $535,000 | House | 23 Fielding Drive SE, Calgary, Alberta T2H1H1 | 2026-07-27 | https://www.realtor.ca/real-estate/30080957/23-fielding-drive-se-calgary-fairview |
+| A2332414 | $409,900 | Row / Townhouse | 580 Savanna Boulevard, Calgary, Alberta T3N1A8 | 2026-07-27 | https://www.realtor.ca/real-estate/30081140/580-savanna-boulevard-calgary-saddle-ridge |
