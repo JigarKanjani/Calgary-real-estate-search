@@ -237,3 +237,7 @@
 | A2332494 | $558,000 | House | 49 Evermeadow Manor SW, Calgary, Alberta T2Y4W8 | 2026-07-28 | https://www.realtor.ca/real-estate/30083928/49-evermeadow-manor-sw-calgary-evergreen |
 | A2332169 | $259,900 | Row / Townhouse | 7, 3800 Fonda Way SE, Calgary, Alberta T2A6G2 | 2026-07-28 | https://www.realtor.ca/real-estate/30083850/7-3800-fonda-way-se-calgary-forest-heights |
 | A2332606 | $532,000 | House | 28 Whiteram Close NE, Calgary, Alberta T1Y5X8 | 2026-07-28 | https://www.realtor.ca/real-estate/30083743/28-whiteram-close-ne-calgary-whitehorn |
+| A2332760 | $439,900 | Duplex | 31 Huntford Road NE, Calgary, Alberta T2K3Y8 | 2026-07-28 | https://www.realtor.ca/real-estate/30085630/31-huntford-road-ne-calgary-huntington-hills |
+| A2332087 | $434,500 | Row / Townhouse | 14, 2323 Oakmoor Drive SW, Calgary, Alberta T2V4T2 | 2026-07-28 | https://www.realtor.ca/real-estate/30085628/14-2323-oakmoor-drive-sw-calgary-palliser |
+| A2332081 | $588,000 | House | 39 Whiteram Close NE, Calgary, Alberta T1Y5X8 | 2026-07-28 | https://www.realtor.ca/real-estate/30085625/39-whiteram-close-ne-calgary-whitehorn |
+| A2332707 | $355,000 | Row / Townhouse | 84, 6915 Ranchview Drive NW, Calgary, Alberta T3G1 | 2026-07-28 | https://www.realtor.ca/real-estate/30085357/84-6915-ranchview-drive-nw-calgary-ranchlands |
