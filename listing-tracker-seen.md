@@ -229,3 +229,11 @@
 | A2332582 | $275,000 | House | 99 Applegrove Crescent SE, Calgary, Alberta T2A7R5 | 2026-07-27 | https://www.realtor.ca/real-estate/30083347/99-applegrove-crescent-se-calgary-applewood-park |
 | A2332564 | $430,000 | Row / Townhouse | 84, 145 Chelsea Mews, Chestermere, Alberta T1X3H1 | 2026-07-27 | https://www.realtor.ca/real-estate/30083014/84-145-chelsea-mews-chestermere-chelsea |
 | A2332454 | $469,999 | House | 1436 Robson Crescent SE, Calgary, Alberta T2A1Y7 | 2026-07-27 | https://www.realtor.ca/real-estate/30082545/1436-robson-crescent-se-calgary-albert-parkradisson-heights |
+| A2332732 | $538,900 | House | 215 Penbrooke Way SE, Calgary, Alberta T2A3S7 | 2026-07-28 | https://www.realtor.ca/real-estate/30085202/215-penbrooke-way-se-calgary-penbrooke-meadows |
+| A2332710 | $450,000 | House | 195 Shawglen Road SW, Calgary, Alberta T2Y1Y2 | 2026-07-28 | https://www.realtor.ca/real-estate/30084901/195-shawglen-road-sw-calgary-shawnessy |
+| A2332490 | $349,900 | House | 3320 60 Street NE, Calgary, Alberta T1Y3S9 | 2026-07-28 | https://www.realtor.ca/real-estate/30084784/3320-60-street-ne-calgary-temple |
+| A2332603 | $464,999 | Row / Townhouse | 1213 Sage Hill Grove NW, Calgary, Alberta T3R2A1 | 2026-07-28 | https://www.realtor.ca/real-estate/30084182/1213-sage-hill-grove-nw-calgary-sage-hill |
+| A2332646 | $430,000 | Row / Townhouse | 212, 75 Cornerstone Row NE, Calgary, Alberta T3N2K | 2026-07-28 | https://www.realtor.ca/real-estate/30084147/212-75-cornerstone-row-ne-calgary-cornerstone |
+| A2332494 | $558,000 | House | 49 Evermeadow Manor SW, Calgary, Alberta T2Y4W8 | 2026-07-28 | https://www.realtor.ca/real-estate/30083928/49-evermeadow-manor-sw-calgary-evergreen |
+| A2332169 | $259,900 | Row / Townhouse | 7, 3800 Fonda Way SE, Calgary, Alberta T2A6G2 | 2026-07-28 | https://www.realtor.ca/real-estate/30083850/7-3800-fonda-way-se-calgary-forest-heights |
+| A2332606 | $532,000 | House | 28 Whiteram Close NE, Calgary, Alberta T1Y5X8 | 2026-07-28 | https://www.realtor.ca/real-estate/30083743/28-whiteram-close-ne-calgary-whitehorn |
