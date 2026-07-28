@@ -241,3 +241,10 @@
 | A2332087 | $434,500 | Row / Townhouse | 14, 2323 Oakmoor Drive SW, Calgary, Alberta T2V4T2 | 2026-07-28 | https://www.realtor.ca/real-estate/30085628/14-2323-oakmoor-drive-sw-calgary-palliser |
 | A2332081 | $588,000 | House | 39 Whiteram Close NE, Calgary, Alberta T1Y5X8 | 2026-07-28 | https://www.realtor.ca/real-estate/30085625/39-whiteram-close-ne-calgary-whitehorn |
 | A2332707 | $355,000 | Row / Townhouse | 84, 6915 Ranchview Drive NW, Calgary, Alberta T3G1 | 2026-07-28 | https://www.realtor.ca/real-estate/30085357/84-6915-ranchview-drive-nw-calgary-ranchlands |
+| A2332512 | $419,900 | House | 3032 32A Avenue SE, Calgary, Alberta T2B0J3 | 2026-07-28 | https://www.realtor.ca/real-estate/30087996/3032-32a-avenue-se-calgary-dover |
+| A2332466 | $520,000 | House | 4 Hunterhorn Gate NE, Calgary, Alberta T2K6H3 | 2026-07-28 | https://www.realtor.ca/real-estate/30087946/4-hunterhorn-gate-ne-calgary-huntington-hills |
+| A2332652 | $380,000 | Duplex | 36 Dovista Court SE, Calgary, Alberta T2B3P4 | 2026-07-28 | https://www.realtor.ca/real-estate/30087365/36-dovista-court-se-calgary-dover |
+| A2332684 | $430,000 | Row / Townhouse | 223, 75 Cornerstone Row NE, Calgary, Alberta T3N2K | 2026-07-28 | https://www.realtor.ca/real-estate/30086876/223-75-cornerstone-row-ne-calgary-cornerstone |
+| A2332762 | $420,000 | Row / Townhouse | 322, 72 Cornerstone Manor NE, Calgary, Alberta T3N | 2026-07-28 | https://www.realtor.ca/real-estate/30086857/322-72-cornerstone-manor-ne-calgary-cornerstone |
+| A2332748 | $534,900 | House | 715 64 Avenue NW, Calgary, Alberta T2K0M3 | 2026-07-28 | https://www.realtor.ca/real-estate/30086299/715-64-avenue-nw-calgary-thorncliffe |
+| A2332566 | $460,000 | Row / Townhouse | 52, 10030 Oakmoor Way SW, Calgary, Alberta T2V4S8 | 2026-07-28 | https://www.realtor.ca/real-estate/30086295/52-10030-oakmoor-way-sw-calgary-oakridge |
