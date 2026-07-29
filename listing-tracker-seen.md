@@ -250,3 +250,5 @@
 | A2332566 | $460,000 | Row / Townhouse | 52, 10030 Oakmoor Way SW, Calgary, Alberta T2V4S8 | 2026-07-28 | https://www.realtor.ca/real-estate/30086295/52-10030-oakmoor-way-sw-calgary-oakridge |
 | A2333031 | $499,000 | House | 7807 20A Street SE, Calgary, Alberta T2C1M7 | 2026-07-29 | https://www.realtor.ca/real-estate/30089695/7807-20a-street-se-calgary-ogden |
 | A2332851 | $464,723 | House | 1834 42 Street SE, Calgary, Alberta T2B1B5 | 2026-07-29 | https://www.realtor.ca/real-estate/30088470/1834-42-street-se-calgary-forest-lawn |
+| A2332978 | $420,000 | Duplex | 8524 Berwick Road NW, Calgary, Alberta T3K1E5 | 2026-07-29 | https://www.realtor.ca/real-estate/30092513/8524-berwick-road-nw-calgary-beddington-heights |
+| A2332575 | $499,900 | Row / Townhouse | 76 Sunlake Gardens SE, Calgary, Alberta T2X3G4 | 2026-07-29 | https://www.realtor.ca/real-estate/30090943/76-sunlake-gardens-se-calgary-sundance |
