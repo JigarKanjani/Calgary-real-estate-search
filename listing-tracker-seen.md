@@ -248,3 +248,5 @@
 | A2332762 | $420,000 | Row / Townhouse | 322, 72 Cornerstone Manor NE, Calgary, Alberta T3N | 2026-07-28 | https://www.realtor.ca/real-estate/30086857/322-72-cornerstone-manor-ne-calgary-cornerstone |
 | A2332748 | $534,900 | House | 715 64 Avenue NW, Calgary, Alberta T2K0M3 | 2026-07-28 | https://www.realtor.ca/real-estate/30086299/715-64-avenue-nw-calgary-thorncliffe |
 | A2332566 | $460,000 | Row / Townhouse | 52, 10030 Oakmoor Way SW, Calgary, Alberta T2V4S8 | 2026-07-28 | https://www.realtor.ca/real-estate/30086295/52-10030-oakmoor-way-sw-calgary-oakridge |
+| A2333031 | $499,000 | House | 7807 20A Street SE, Calgary, Alberta T2C1M7 | 2026-07-29 | https://www.realtor.ca/real-estate/30089695/7807-20a-street-se-calgary-ogden |
+| A2332851 | $464,723 | House | 1834 42 Street SE, Calgary, Alberta T2B1B5 | 2026-07-29 | https://www.realtor.ca/real-estate/30088470/1834-42-street-se-calgary-forest-lawn |
