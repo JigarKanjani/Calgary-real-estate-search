@@ -252,3 +252,9 @@
 | A2332851 | $464,723 | House | 1834 42 Street SE, Calgary, Alberta T2B1B5 | 2026-07-29 | https://www.realtor.ca/real-estate/30088470/1834-42-street-se-calgary-forest-lawn |
 | A2332978 | $420,000 | Duplex | 8524 Berwick Road NW, Calgary, Alberta T3K1E5 | 2026-07-29 | https://www.realtor.ca/real-estate/30092513/8524-berwick-road-nw-calgary-beddington-heights |
 | A2332575 | $499,900 | Row / Townhouse | 76 Sunlake Gardens SE, Calgary, Alberta T2X3G4 | 2026-07-29 | https://www.realtor.ca/real-estate/30090943/76-sunlake-gardens-se-calgary-sundance |
+| A2331776 | $370,000 | Row / Townhouse | 116 Savanna Walk NE, Calgary, Alberta T3J0Y4 | 2026-07-30 | https://www.realtor.ca/real-estate/30094407/116-savanna-walk-ne-calgary-saddle-ridge |
+| A2332839 | $449,999 | House | 3722 Catalina Boulevard, Calgary, Alberta T1Y6W6 | 2026-07-30 | https://www.realtor.ca/real-estate/30094349/3722-catalina-boulevard-calgary-monterey-park |
+| A2330870 | $350,000 | House | 28 Martinview Road NE, Calgary, Alberta T3J2X8 | 2026-07-30 | https://www.realtor.ca/real-estate/30094297/28-martinview-road-ne-calgary-martindale |
+| A2332353 | $515,000 | House | 91 Templehill Drive NE, Calgary, Alberta T1Y4C4 | 2026-07-30 | https://www.realtor.ca/real-estate/30093933/91-templehill-drive-ne-calgary-temple |
+| A2329742 | $589,900 | House | 6716 37 Avenue NE, Calgary, Alberta T1Y5E5 | 2026-07-30 | https://www.realtor.ca/real-estate/30093091/6716-37-avenue-ne-calgary-temple |
+| A2332647 | $374,500 | Row / Townhouse | 134 Hawkstone Manor NW, Calgary, Alberta T3G3X2 | 2026-07-30 | https://www.realtor.ca/real-estate/30093057/134-hawkstone-manor-nw-calgary-hawkwood |
